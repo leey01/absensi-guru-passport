@@ -36,36 +36,36 @@ Route::get('/', function () {
 Route::post('/login', [AuthController::class, 'login']);
 
 // logout
-Route::group(['middleware' => 'auth:sanctum'], function () {
+Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 // Route Home
-Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
+Route::group(['middleware' => 'auth:api', 'prefix' => 'home'], function () {
     Route::get('/', [HomeController::class, 'kehadiran']);
     Route::post('/absen-masuk', [HomeController::class, 'absenMasuk']);
     Route::post('/absen-pulang', [HomeController::class, 'absenPulang']);
 });
 
 // Route History
-Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
+Route::group(['middleware' => 'auth:api', 'prefix' => 'history'], function () {
     Route::get('/', [HistoryController::class, 'default']);
     Route::get('/otherdate', [HistoryController::class, 'index']);
 });
 
 // Route Calender
-Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'calendar'], function () {
+Route::group(['middleware' => 'auth:api', 'prefix' => 'calendar'], function () {
     Route::get('/', [KalenderController::class, 'index']);
     Route::get('/otherdate', [KalenderController::class, 'otherDate']);
     Route::get('/notifevent', [KalenderController::class, 'notifEvent']);
 });
 
 // Route Profile
-Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'profile'], function () {
+Route::group(['middleware' => 'auth:api', 'prefix' => 'profile'], function () {
     Route::get('/', [ProfileController::class, 'index']);
     Route::get('/detail', [ProfileController::class, 'show']);
     Route::post('/reset-password', [ProfileController::class, 'resetPassword']);
@@ -74,14 +74,14 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'profile'], function (
 
 // Route Admin Dashboard
 Route::get('/dashboard/donload', [DashboardController::class, 'donloadKehadiran']);
-Route::group(['middleware' => ['auth:sanctum', 'role:staff'], 'prefix' => 'dashboard'], function () {
+Route::group(['middleware' => ['auth:api', 'role:staff'], 'prefix' => 'dashboard'], function () {
     Route::get('/', [DashboardController::class, 'dashboard']);
     Route::get('/statistik', [DashboardController::class, 'statistik']);
     Route::get('/jadwal', [DashboardController::class, 'jadwal']);
 });
 
 // Route Admin Kehadiran
-Route::group(['middleware' => ['auth:sanctum', 'role:staff'], 'prefix' => 'kehadiran'], function () {
+Route::group(['middleware' => ['auth:api', 'role:staff'], 'prefix' => 'kehadiran'], function () {
     Route::get('/', [KehadiranController::class, 'kehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
     Route::get('/history', [KehadiranController::class, 'historyKehadiran']);
@@ -89,7 +89,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:staff'], 'prefix' => 'kehad
 });
 
 // Route Admin Karyawan
-Route::group(['middleware' => ['auth:sanctum', 'role:staff'], 'prefix' => 'karyawan'], function () {
+Route::group(['middleware' => ['auth:api', 'role:staff'], 'prefix' => 'karyawan'], function () {
     Route::get('/', [KaryawanController::class, 'index']);
     Route::post('/store-user', [KaryawanController::class, 'storeUser']);
 
@@ -100,7 +100,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:staff'], 'prefix' => 'karya
 });
 
 // Route Admin Kalender
-Route::group(['middleware' => ['auth:sanctum', 'role:staff'], 'prefix' => 'kalender'], function () {
+Route::group(['middleware' => ['auth:api', 'role:staff'], 'prefix' => 'kalender'], function () {
     Route::get('/', [\App\Http\Controllers\Admin\KalenderController::class, 'index']);
     Route::post('/create', [\App\Http\Controllers\Admin\KalenderController::class, 'store']);
     Route::get('/destroy/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'destroy']);

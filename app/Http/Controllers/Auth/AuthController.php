@@ -14,7 +14,7 @@ class AuthController extends Controller
         $user = User::where('niy', $request->niy)->first();
 
         if ($user->niy == $request->niy && Hash::check($request->password, $user->password)){
-            $token = $user->createToken('token-name')->plainTextToken;
+            $token = $user->createToken($user->nama)->accessToken;
 
             return response()->json([
                 'messege' => 'success',
