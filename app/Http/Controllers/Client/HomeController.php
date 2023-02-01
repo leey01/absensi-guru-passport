@@ -130,6 +130,10 @@ class HomeController extends Controller
             ->whereDate('created_at', '=', Carbon::today()->toDateString())
             ->exists();
 
+        $dataAbsen = Absensi::where('user_id', Auth::user()->id)
+            ->whereDate('created_at', '=', Carbon::today()->toDateString())
+            ->get();
+
         // nama user
         $user = DB::table('users')
             ->find(Auth::user()->id);
@@ -144,6 +148,7 @@ class HomeController extends Controller
         return response()->json([
             'user' => $user,
             'status_absen' => $status,
+            'absen' => $dataAbsen
         ]);
     }
 }
