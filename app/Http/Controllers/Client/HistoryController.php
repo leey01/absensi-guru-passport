@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\KehadiranResource;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HistoryController extends Controller
 {
@@ -20,11 +22,11 @@ class HistoryController extends Controller
         // data absensi berdasarkan id user dan tanggal yg diinputkan user
         $absensi = Absensi::where('user_id', Auth::user()->id)
             ->whereDate('tanggal_masuk', $request->tanggal)
-            ->get();
+            ->first();
 
         return response()->json([
             'messege' => 'success',
-            'data' => $absensi
+            'data' => new KehadiranResource($absensi)
         ], 200);
 
     }
@@ -35,11 +37,12 @@ class HistoryController extends Controller
         $tanggal_sekarang = Carbon::now()->format('Y-m-d');
         $absensi = Absensi::where('user_id', Auth::user()->id)
             ->whereDate('tanggal_masuk', $tanggal_sekarang)
-            ->get();
+            ->first();
+
 
         return response()->json([
             'messege' => 'success',
-            'data' => $absensi
+            'data' => new KehadiranResource($absensi)
         ], 200);
 
     }

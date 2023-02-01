@@ -117,16 +117,16 @@ class HomeController extends Controller
 
     public function kehadiran()
     {
-        $masuk = false;
-        $pulang = false;
+        $absenMasuk = false;
+        $absenPulang = false;
 
         $absenMasuk = Absensi::where('user_id', Auth::user()->id)
-            ->where('keterangan', 'masuk')
+            ->whereNotNull('tanggal_masuk')
             ->whereDate('created_at', '=', Carbon::today()->toDateString())
             ->exists();
 
         $absenPulang = Absensi::where('user_id', Auth::user()->id)
-            ->where('keterangan', 'pulang')
+            ->whereNotNull('tanggal_pulang')
             ->whereDate('created_at', '=', Carbon::today()->toDateString())
             ->exists();
 
@@ -134,15 +134,10 @@ class HomeController extends Controller
         $user = DB::table('users')
             ->find(Auth::user()->id);
 
-        if ($absenMasuk) {
-            $masuk = true;
-        } elseif ($absenPulang) {
-            $pulang = true;
-        }
 
         $status = [
-            'masuk' => $masuk,
-            'pulang' => $pulang
+            'masuk' => $absenMasuk,
+            'pulang' => $absenPulang
         ];
 
 
