@@ -41,13 +41,10 @@ class KalenderController extends Controller
         return response()->json([
             'data' => $events
         ]);
-
-
     }
 
     public function notifEvent()
     {
-        $event = null;
         $checkEvent = DB::table('kalenders')
             ->whereDate('tanggal', Carbon::now())
             ->exists();
@@ -60,7 +57,7 @@ class KalenderController extends Controller
 
         return response()->json([
             'message' => 'event hari ini',
-            'data' => $event
+            'data' => []
         ]);
     }
 }
