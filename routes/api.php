@@ -85,6 +85,7 @@ Route::group(['middleware' => ['auth:api', 'role:staff'], 'prefix' => 'kehadiran
     Route::get('/', [KehadiranController::class, 'kehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
     Route::get('/history', [KehadiranController::class, 'historyKehadiran']);
+    Route::get('/kehadiran-terbaru', [KehadiranController::class, 'kehadiranTerbaru']);
     Route::post('/search', [KehadiranController::class, 'search']);
 });
 

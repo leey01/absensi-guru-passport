@@ -8,6 +8,7 @@ use App\Models\Absensi;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isNull;
@@ -105,7 +106,22 @@ class KehadiranController extends Controller
         $absen = Absensi::with(['user'])
             ->find($id);
 
-        return new KehadiranResource($absen);
+        if (is_null($absen)){
+            return response()->json([
+                'message' => "Data Absen tidak ditemukan!"
+            ], 404);
+        }
+
+        $user = User::find(Auth::user()->id);
+
+        return response()->json([
+            'status' => 200,
+            'message' => "Detail Absen $user->nama",
+            'data' => [
+                'absen' => new KehadiranResource($absen),
+                'user' => $user
+            ]
+        ]);
     }
 
     public function search(Request $request)
@@ -132,5 +148,17 @@ class KehadiranController extends Controller
                 'message' => "Data Absen tidak ditemukan!"
             ], 401);
         }
+    }
+
+    public function kehadiranTerbaru()
+    {
+        $absen = DB::table('absensis')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'message' => 'Kehadiran Terbaru',
+            'data' => $absen
+        ]);
     }
 }
