@@ -67,9 +67,7 @@ class KehadiranController extends Controller
     public function historyKehadiran(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'tanggal' => ['required', 'integer'],
-           'bulan' => ['required', 'integer'],
-           'tahun' => ['required', 'integer'],
+           'tanggal' => ['required'],
         ]);
 
         if ($validator->fails()){
@@ -77,26 +75,48 @@ class KehadiranController extends Controller
         }
 
         $tanggal = $request->tanggal;
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
+        // Karyawan
+        $jmlKaryawan = User::all()
+            ->count();
+
+
+        // Jumlah masuk today
+        $jmlMasuk = DB::table('absensis')
+            ->where('keterangan', 'masuk')
+            ->whereDate('created_at', $tanggal)
+            ->count();
+        // Jumlah pulang today
+        $jmlPulang = DB::table('absensis')
+            ->where('keterangan', 'pulang')
+            ->whereDate('created_at', $tanggal)
+            ->count();
+        $jmlAbsen = $jmlKaryawan - $jmlMasuk;
 
 
         // list absen masuk pulang dengan paginate
         $listMasuk = Absensi::with(['user'])
-            ->whereDate('created_at', "$tahun-$bulan-$tanggal")
+            ->whereDate('created_at', $tanggal)
             ->where('keterangan', 'masuk')
             ->paginate(12);
 
         $listPulang = Absensi::with(['user'])
-            ->whereDate('created_at', "$tahun-$bulan-$tanggal")
+            ->whereDate('created_at', $tanggal)
             ->where('keterangan', 'pulang')
             ->paginate(12);
 
         return response()->json([
             'message' => 'history kehadiran',
             'data' => [
-                'masuk' => $listMasuk,
-                'pulang' => $listPulang
+                'jml_kehadiran' => [
+                    'jml_karyawan' => $jmlKaryawan,
+                    'jml_masuk' => $jmlMasuk,
+                    'jml_pulang' => $jmlPulang,
+                    'jml_absen' => $jmlAbsen
+                ],
+                'list_absen' => [
+                    'masuk' => $listMasuk,
+                    'pulang' => $listPulang
+                ]
             ]
         ]);
     }
@@ -152,7 +172,7 @@ class KehadiranController extends Controller
 
     public function kehadiranTerbaru()
     {
-        $absen = DB::table('absensis')
+        $absen = Absensi::with(['user'])
             ->orderBy('created_at', 'desc')
             ->get();
 

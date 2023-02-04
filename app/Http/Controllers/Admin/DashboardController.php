@@ -13,8 +13,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $tanggal = $request->tanggal ?? Carbon::now()->format('Y-m-d');
+
         // Karyawan
         $jmlKaryawan = User::all()
             ->count();
@@ -22,12 +24,12 @@ class DashboardController extends Controller
         // Jumlah masuk today
         $jmlMasuk = DB::table('absensis')
             ->where('keterangan', 'masuk')
-            ->whereDate('created_at', Carbon::now())
+            ->whereDate('created_at', $tanggal)
             ->count();
         // Jumlah pulang today
         $jmlPulang = DB::table('absensis')
             ->where('keterangan', 'pulang')
-            ->whereDate('created_at', Carbon::now())
+            ->whereDate('created_at', $tanggal)
             ->count();
         $jmlAbsen = $jmlKaryawan - ($jmlMasuk + $jmlPulang);
 
