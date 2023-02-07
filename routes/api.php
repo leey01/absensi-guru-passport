@@ -74,14 +74,14 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'profile'], function () {
 
 // Route Admin Dashboard
 Route::get('/dashboard/donload', [DashboardController::class, 'donloadKehadiran']);
-Route::group(['middleware' => ['auth:api', 'is_admin'], 'prefix' => 'dashboard'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'dashboard'], function () {
     Route::get('/', [DashboardController::class, 'dashboard']);
     Route::get('/statistik', [DashboardController::class, 'statistik']);
     Route::get('/jadwal', [DashboardController::class, 'jadwal']);
 });
 
 // Route Admin Kehadiran
-Route::group(['middleware' => ['auth:api', 'is_admin'], 'prefix' => 'kehadiran'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadiran'], function () {
     Route::get('/', [KehadiranController::class, 'kehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
     Route::get('/history', [KehadiranController::class, 'historyKehadiran']);
@@ -90,7 +90,7 @@ Route::group(['middleware' => ['auth:api', 'is_admin'], 'prefix' => 'kehadiran']
 });
 
 // Route Admin Karyawan
-Route::group(['middleware' => ['auth:api', 'is_admin'], 'prefix' => 'karyawan'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'karyawan'], function () {
     Route::get('/', [KaryawanController::class, 'index']);
     Route::post('/store-user', [KaryawanController::class, 'storeUser']);
 
@@ -101,7 +101,7 @@ Route::group(['middleware' => ['auth:api', 'is_admin'], 'prefix' => 'karyawan'],
 });
 
 // Route Admin Kalender
-Route::group(['middleware' => ['auth:api', 'is_admin'], 'prefix' => 'kalender'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kalender'], function () {
     Route::get('/', [\App\Http\Controllers\Admin\KalenderController::class, 'index']);
     Route::post('/create', [\App\Http\Controllers\Admin\KalenderController::class, 'store']);
     Route::get('/destroy/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'destroy']);

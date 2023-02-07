@@ -41,7 +41,7 @@ class ProfileController extends Controller
                     $user->password = Hash::make($request->password_baru);
                     $user->save();
                     $user->tokens()->delete();
-                    $token = $user->createToken($user->nama)->accessToken;
+                    $token = $user->createToken('token-name')->plainTextToken;
                     return response()->json([
                         'message' => 'success',
                         'token' => $token
