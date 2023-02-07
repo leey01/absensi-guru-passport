@@ -45,27 +45,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // Route Home
-Route::group(['middleware' => 'auth:api', 'prefix' => 'home'], function () {
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
     Route::get('/', [HomeController::class, 'kehadiran']);
     Route::post('/absen-masuk', [HomeController::class, 'absenMasuk']);
     Route::post('/absen-pulang', [HomeController::class, 'absenPulang']);
 });
 
 // Route History
-Route::group(['middleware' => 'auth:api', 'prefix' => 'history'], function () {
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
     Route::get('/', [HistoryController::class, 'default']);
     Route::get('/otherdate', [HistoryController::class, 'index']);
 });
 
 // Route Calender
-Route::group(['middleware' => 'auth:api', 'prefix' => 'calendar'], function () {
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'calendar'], function () {
     Route::get('/', [KalenderController::class, 'index']);
     Route::get('/otherdate', [KalenderController::class, 'otherDate']);
     Route::get('/notifevent', [KalenderController::class, 'notifEvent']);
 });
 
 // Route Profile
-Route::group(['middleware' => 'auth:api', 'prefix' => 'profile'], function () {
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'profile'], function () {
     Route::get('/', [ProfileController::class, 'index']);
     Route::get('/detail', [ProfileController::class, 'show']);
     Route::post('/reset-password', [ProfileController::class, 'resetPassword']);
