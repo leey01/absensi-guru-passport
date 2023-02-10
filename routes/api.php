@@ -36,7 +36,7 @@ Route::get('/', function () {
 Route::post('/login', [AuthController::class, 'login']);
 
 // logout
-Route::group(['middleware' => 'auth:api'], function () {
+Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
 });
 
