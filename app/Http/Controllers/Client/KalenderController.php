@@ -57,7 +57,7 @@ class KalenderController extends Controller
 
         return response()->json([
             'message' => 'event hari ini',
-            'data' => []
+            'data' => $event
         ]);
     }
 }
