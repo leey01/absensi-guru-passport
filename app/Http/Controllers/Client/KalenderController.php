@@ -45,6 +45,7 @@ class KalenderController extends Controller
 
     public function notifEvent()
     {
+        $event = array();
         $checkEvent = DB::table('kalenders')
             ->whereDate('tanggal', Carbon::now())
             ->exists();
