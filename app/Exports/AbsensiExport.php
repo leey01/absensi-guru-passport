@@ -46,7 +46,7 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
 
     public function collection()
     {
-        return Absensi::with('user')
+        return Absensi::with(['user'])
             ->whereBetween('created_at', [$this->start_time, $this->end_time])
             ->get();
     }
