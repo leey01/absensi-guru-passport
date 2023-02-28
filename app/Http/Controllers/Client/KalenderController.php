@@ -47,12 +47,14 @@ class KalenderController extends Controller
     {
         $event = array();
         $checkEvent = DB::table('kalenders')
-            ->whereDate('tanggal', Carbon::now())
+            // ->whereDate('tanggal', Carbon::now())
+            ->whereDate('tanggal', '>=', today()->toDateString())
             ->exists();
-
+ 
         if ($checkEvent) {
             $event = DB::table('kalenders')
-                ->whereDate('tanggal', Carbon::now())
+                // ->whereDate('tanggal', Carbon::now())
+                ->whereDate('tanggal', '>=', today()->toDateString())
                 ->get();
         }
 
