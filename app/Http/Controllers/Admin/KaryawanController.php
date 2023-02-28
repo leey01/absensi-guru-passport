@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+
 class KaryawanController extends Controller
 {
 
@@ -35,6 +38,7 @@ class KaryawanController extends Controller
 
     public function storeUser(Request $request)
     {
+        $default_password = 'smkrus';
         $validator = Validator::make(request()->all(), [
             'nama' => ['required'],
             'email' => ['required', 'email'],
@@ -43,6 +47,7 @@ class KaryawanController extends Controller
             'alamat' => ['required'],
             'no_hp' => ['required'],
             'jenis_user' => ['required'],
+            'pf_foto' => ['image:jpeg,png,jpg', 'file']
         ]);
 
         if ($validator->fails()) {
@@ -52,16 +57,19 @@ class KaryawanController extends Controller
             ], 400);
         } else{
             try {
+            $image_path = $request->file('pf_foto')->store('/profile');
+            
             $user = User::create([
                 'nama' => $request->nama,
                 'email' => $request->email,
                 'niy' => $request->niy,
-                'password' => $request->password,
+                'password' => Hash::make($default_password),
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
                 'jenis_user' => $request->jenis_user,
-                // 'pf_profile' => $request->file('pf_profile')->store('public/profile'),
-                ]);
+                'pf_foto' => $image_path
+            ]);    
+
             return response()->json([
                 'message' => 'success',
                 'user' => $user
