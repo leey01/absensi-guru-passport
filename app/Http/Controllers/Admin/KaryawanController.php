@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
 class KaryawanController extends Controller
@@ -87,13 +89,22 @@ class KaryawanController extends Controller
 
     public function updateUser(Request $request)
     {
+        $user = User::find($request->id);
+
+        if (!$user) {
+            return Response::json(['message' => 'Id not found'], 404);
+        }
+
         // get data
         $validator = Validator::make(request()->all(), [
             'nama' => ['required'],
             'email' => ['required', 'email'],
             'alamat' => ['required'],
             'no_hp' => ['required'],
+            'pf_foto' => ['image:jpeg,png,jpg', 'file']
         ]);
+
+        $image_path = $request->file('pf_foto')->store('/profile');
 
         if ($validator->fails()) {
             return response()->json([
@@ -101,14 +112,22 @@ class KaryawanController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
+
+        if ($request->hasFile('pf_foto')) {
+            File::delete($user->pf_foto);
+        }
+
         try {
+            $image_path = $request->file('pf_foto')->store('/profile');
+
+
             $user = User::where('id', $request->id)->update([
                 'nama' => $request->nama,
                 'email' => $request->email,
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
                 'jenis_user' => $request->jenis_user,
-                // 'pf_profile' => $request->file('pf_profile')->store('public/profile'),
+                'pf_foto' => $image_path,
                 ]);
             return response()->json([
                 'message' => 'success',
@@ -125,7 +144,6 @@ class KaryawanController extends Controller
 
     public function deleteUser($id)
     {
-//
         try {
             $user = User::where('id', $id)->delete();
             return response()->json([
