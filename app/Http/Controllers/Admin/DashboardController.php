@@ -237,17 +237,4 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function donloadKehadiran()
-    {
-        $start_time = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $end_time = Carbon::now()->endOfMonth()->format('Y-m-d');
-        $bulan = Carbon::now()->format('m');
-//        return response()->json([
-//           'start' => $start_time,
-//           'end' => $end_time
-//        ]);
-
-        return Excel::download(new AbsensiExport($start_time, $end_time), "datakehadiran|bulan-$bulan.xlsx");
-//        return (new AbsensiExport($start_time, $end_time))->download("datakehadiran|bulan-$bulan.xlsx");
-    }
 }

@@ -20,6 +20,8 @@ class KehadiranResource extends JsonResource
         $pf_masuk = Storage::disk('public')->url($fotoPathMasuk);
         $pf_pulang = Storage::disk('public')->url($fotoPathPulang);
 
+        $pf_profile = Storage::disk('public')->url($this->user->pf_foto);
+
         return [
           'keterangan' => $this->keterangan,
           'catatan_masuk'=> $this->catatan_masuk,
@@ -36,6 +38,15 @@ class KehadiranResource extends JsonResource
           'longitude_pulang'=> $this->longitude_pulang,
           'latitude_masuk'=> $this->latitude_masuk,
           'latitude_pulang'=> $this->latitude_pulang,
+            'user' => [
+                'nama' => $this->user->nama,
+                'email' => $this->user->email,
+                'niy' => $this->user->niy,
+                'alamat' => $this->user->alamat,
+                'no_hp' => $this->user->no_hp,
+                'jabatan' => $this->user->jenis_user,
+                'pf_foto' => $pf_profile,
+            ]
         ];
     }
 }

@@ -10,7 +10,7 @@ class Absensi extends Model
     use HasFactory;
 
 
-    protected $fillable = ['user_id', 'keterangan', 'waktu_masuk', 'tanggal_masuk', 'catatan_masuk', 'foto_masuk', 'lokasi_masuk', 'longitude_masuk', 'latitude_masuk'];
+    protected $fillable = ['user_id', 'keterangan', 'waktu_masuk', 'tanggal_masuk', 'catatan_masuk', 'foto_masuk', 'lokasi_masuk', 'longitude_masuk', 'latitude_masuk', 'is_valid_masuk', 'is_valid_pulang'];
 
     public function user()
     {

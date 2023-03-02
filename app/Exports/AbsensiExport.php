@@ -37,11 +37,9 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
             'foto_pulang',
             'lokasi_masuk',
             'lokasi_pulang',
-            'longitude_masuk',
-            'latitude_masuk',
-            'longitude_pulang',
-            'latitude_pulang',
-        ];
+            'tempat_absen_masuk',
+            'tempat_absen_pulang',
+            ];
     }
 
     public function collection()
@@ -53,6 +51,18 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
 
     public function map($kehadiran): array
     {
+        if ($kehadiran->is_valid_masuk == 1) {
+            $kehadiran->is_valid_masuk = 'Di Sekolah';
+        } else {
+            $kehadiran->is_valid_masuk = 'Tidak Di Sekolah';
+        }
+
+        if ($kehadiran->is_valid_pulang == 1) {
+            $kehadiran->is_valid_pulang = 'Di Sekolah';
+        } else {
+            $kehadiran->is_valid_pulang = 'Tidak Di Sekolah';
+        }
+
         return [
             $kehadiran->id,
             $kehadiran->user->nama,
@@ -67,10 +77,8 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
             $kehadiran->foto_pulang,
             $kehadiran->lokasi_masuk,
             $kehadiran->lokasi_pulang,
-            $kehadiran->longitude_masuk,
-            $kehadiran->latitude_masuk,
-            $kehadiran->longitude_pulang,
-            $kehadiran->latitude_pulang,
+            $kehadiran->is_valid_masuk,
+            $kehadiran->is_valid_pulang,
         ];
     }
 }

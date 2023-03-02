@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AbsensiExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KehadiranResource;
 use App\Models\Absensi;
@@ -11,11 +12,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\isNull;
+use function PHPUnit\Framework\isTrue;
 
 class KehadiranController extends Controller
 {
-    public function kehadiran(){
+    // fungsi ga dipake
+    public function kehadirannn(){
         // Karyawan
         $jmlKaryawan = User::all()
             ->count();
@@ -64,44 +68,212 @@ class KehadiranController extends Controller
         return $response;
     }
 
-    public function historyKehadiran(Request $request)
+    public function donloadKehadiran(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-           'tanggal' => ['required'],
-        ]);
+        $start_time = $request->start_time;
+        $end_time = $request->end_time;
 
-        if ($validator->fails()){
-            return response()->json($validator->errors(), 422);
+        return Excel::download(new AbsensiExport($start_time, $end_time), "datakehadiran|$start_time --> $end_time.xlsx");
+//        return (new AbsensiExport($start_time, $end_time))->download("datakehadiran|bulan-$bulan.xlsx");
+    }
+
+    public function kehadiran(Request $request)
+    {
+
+        $search = $request->search;
+        $startTime = $request->start_time;
+        is_null($endTime = $request->end_time) ? $endTime = $startTime : $endTime = $request->end_time;
+        $result_masuk = [];
+        $result_pulang = [];
+
+
+        // jika parameter search ada
+        if (isset($search) ? true : false) {
+
+            // Karyawan
+            $jmlKaryawan = User::all()
+                ->count();
+
+
+            // Jumlah masuk
+            $jmlMasuk = DB::table('absensis')
+                ->where('keterangan', 'masuk')
+                ->whereDate('created_at', Carbon::now())
+                ->count();
+            // Jumlah pulang
+            $jmlPulang = DB::table('absensis')
+                ->where('keterangan', 'pulang')
+                ->whereDate('created_at', Carbon::now())
+                ->count();
+            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
+
+            // search masuk
+            $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->where('keterangan', 'masuk')
+                ->with('user')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            // search pulang
+            $result_pulang = Absensi::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->where('keterangan', 'pulang')
+                ->with('user')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            return response()->json([
+                'message' => 'history kehadiran',
+                'data' => [
+                    'jml_kehadiran' => [
+                        'jml_karyawan' => $jmlKaryawan,
+                        'jml_masuk' => $jmlMasuk,
+                        'jml_pulang' => $jmlPulang,
+                        'jml_absen' => $jmlAbsen
+                    ],
+                    'list_absen' => [
+                        'masuk' => $result_masuk,
+                        'pulang' => $result_pulang
+                    ]
+                ]
+            ]);
         }
 
-        $tanggal = $request->tanggal;
+        // jika parameter start_time ada
+        if (isset($startTime) ? true : false) {
+
+            // Karyawan
+            $jmlKaryawan = User::all()
+                ->count();
+
+            // Jumlah masuk
+            $jmlMasuk = DB::table('absensis')
+                ->where('keterangan', 'masuk')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->count();
+            // Jumlah pulang
+            $jmlPulang = DB::table('absensis')
+                ->where('keterangan', 'pulang')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->count();
+            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
+
+            // list absen masuk pulang dengan paginate
+            $listMasuk = Absensi::with(['user'])
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->where('keterangan', 'masuk')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(12);
+
+            $listPulang = Absensi::with(['user'])
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->where('keterangan', 'pulang')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(12);
+
+
+            return response()->json([
+                'message' => 'history kehadiran',
+                'data' => [
+                    'jml_kehadiran' => [
+                        'jml_karyawan' => $jmlKaryawan,
+                        'jml_masuk' => $jmlMasuk,
+                        'jml_pulang' => $jmlPulang,
+                        'jml_absen' => $jmlAbsen
+                    ],
+                    'list_absen' => [
+                        'masuk' => $listMasuk,
+                        'pulang' => $listPulang
+                    ]
+                ]
+            ]);
+        }
+
+        // starttime dan search ada
+        if (isset($startTime) && isset($search) ? true : false) {
+            // Karyawan
+            $jmlKaryawan = User::all()
+                ->count();
+
+            // Jumlah masuk today
+            $jmlMasuk = DB::table('absensis')
+                ->where('keterangan', 'masuk')
+                ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                ->count();
+            // Jumlah pulang today
+            $jmlPulang = DB::table('absensis')
+                ->where('keterangan', 'pulang')
+                ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                ->count();
+            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
+
+            // search masuk
+            $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->where('keterangan', 'masuk')
+                ->whereBetween('created_at', [$startTime, $endTime])
+                ->with('user')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            // search pulang
+            $result_pulang = Absensi::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->where('keterangan', 'pulang')
+                ->whereBetween('created_at', [$startTime, $endTime])
+                ->with('user')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            return response()->json([
+                'message' => 'history kehadiran',
+                'data' => [
+                    'jml_kehadiran' => [
+                        'jml_karyawan' => $jmlKaryawan,
+                        'jml_masuk' => $jmlMasuk,
+                        'jml_pulang' => $jmlPulang,
+                        'jml_absen' => $jmlAbsen
+                    ],
+                    'list_absen' => [
+                        'masuk' => $result_masuk,
+                        'pulang' => $result_pulang
+                    ]
+                ]
+            ]);
+
+        }
+        // kondisi default
+
         // Karyawan
         $jmlKaryawan = User::all()
             ->count();
 
 
-        // Jumlah masuk today
+        // Jumlah masuk
         $jmlMasuk = DB::table('absensis')
             ->where('keterangan', 'masuk')
-            ->whereDate('created_at', $tanggal)
+            ->whereDate('created_at', Carbon::now())
             ->count();
-        // Jumlah pulang today
+        // Jumlah pulang
         $jmlPulang = DB::table('absensis')
             ->where('keterangan', 'pulang')
-            ->whereDate('created_at', $tanggal)
+            ->whereDate('created_at', Carbon::now())
             ->count();
         $jmlAbsen = $jmlKaryawan - $jmlMasuk;
 
 
         // list absen masuk pulang dengan paginate
         $listMasuk = Absensi::with(['user'])
-            ->whereDate('created_at', $tanggal)
+            ->whereDate('created_at', Carbon::now())
             ->where('keterangan', 'masuk')
+            ->orderBy('created_at', 'DESC')
             ->paginate(12);
 
         $listPulang = Absensi::with(['user'])
-            ->whereDate('created_at', $tanggal)
+            ->whereDate('created_at', Carbon::now())
             ->where('keterangan', 'pulang')
+            ->orderBy('created_at', 'DESC')
             ->paginate(12);
 
         return response()->json([
@@ -132,14 +304,12 @@ class KehadiranController extends Controller
             ], 404);
         }
 
-        $user = User::find(Auth::user()->id);
 
         return response()->json([
             'status' => 200,
-            'message' => "Detail Absen $user->nama",
+            'message' => "Detail Absen",
             'data' => [
                 'absen' => new KehadiranResource($absen),
-                'user' => $user
             ]
         ]);
     }

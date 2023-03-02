@@ -73,7 +73,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'profile'], function (
 
 
 // Route Admin Dashboard
-Route::get('/dashboard/donload', [DashboardController::class, 'donloadKehadiran']);
+Route::get('/dashboard/donload', [KehadiranController::class, 'donloadKehadiran']);
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'dashboard'], function () {
     Route::get('/', [DashboardController::class, 'dashboard']);
     Route::get('/statistik', [DashboardController::class, 'statistik']);
@@ -84,7 +84,6 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'dashboa
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadiran'], function () {
     Route::get('/', [KehadiranController::class, 'kehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
-    Route::get('/history', [KehadiranController::class, 'historyKehadiran']);
     Route::get('/kehadiran-terbaru', [KehadiranController::class, 'kehadiranTerbaru']);
     Route::post('/search', [KehadiranController::class, 'search']);
 });
