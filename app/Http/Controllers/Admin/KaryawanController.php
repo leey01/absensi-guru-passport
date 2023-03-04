@@ -31,6 +31,10 @@ class KaryawanController extends Controller
                     ->orWhere('niy', 'like', '%'.$request->search.'%');
             })->get();
 
+            // path foto user
+            $pengajar->pf_foto = Storage::url($pengajar->pf_foto);
+            $staff->pf_foto = Storage::url($staff->pf_foto);
+
             return response()->json(
                 [
                     'message' => 'succes',
