@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Resources\KaryawanResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -31,15 +32,11 @@ class KaryawanController extends Controller
                     ->orWhere('niy', 'like', '%'.$request->search.'%');
             })->get();
 
-            // path foto user
-            $pengajar->pf_foto = Storage::url($pengajar->pf_foto);
-            $staff->pf_foto = Storage::url($staff->pf_foto);
-
             return response()->json(
                 [
                     'message' => 'succes',
-                    'pengajar' => $pengajar,
-                    'staff' => $staff,
+                    'pengajar' => KaryawanResource::collection($pengajar),
+                    'staff' => KaryawanResource::collection($staff),
                 ]
             );
         }
@@ -50,8 +47,8 @@ class KaryawanController extends Controller
         return response()->json(
             [
                 'message' => 'succes',
-                'pengajar' => $pengajar,
-                'staff' => $staff,
+                'pengajar' => KaryawanResource::collection($pengajar),
+                'staff' => KaryawanResource::collection($staff),
             ]
         );
 
