@@ -14,8 +14,32 @@ use Illuminate\Support\Facades\Validator;
 class KaryawanController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
+
+        if (isset($request->search) ? true : false)
+        {
+            // search user pengajar by name and niy
+            $pengajar = User::where('jenis_user', 'pengajar')->where(function($query) use ($request){
+                $query->where('nama', 'like', '%'.$request->search.'%')
+                    ->orWhere('niy', 'like', '%'.$request->search.'%');
+            })->get();
+
+            // search user staff by name and niy
+            $staff = User::where('jenis_user', 'staff')->where(function($query) use ($request){
+                $query->where('nama', 'like', '%'.$request->search.'%')
+                    ->orWhere('niy', 'like', '%'.$request->search.'%');
+            })->get();
+
+            return response()->json(
+                [
+                    'message' => 'succes',
+                    'pengajar' => $pengajar,
+                    'staff' => $staff,
+                ]
+            );
+        }
+
         $pengajar = User::where('jenis_user', 'pengajar')->get();
         $staff = User::where('jenis_user', 'staff')->get();
 
@@ -60,7 +84,7 @@ class KaryawanController extends Controller
         } else{
             try {
             $image_path = $request->file('pf_foto')->store('/profile');
-            
+
             $user = User::create([
                 'nama' => $request->nama,
                 'email' => $request->email,
@@ -70,7 +94,7 @@ class KaryawanController extends Controller
                 'no_hp' => $request->no_hp,
                 'jenis_user' => $request->jenis_user,
                 'pf_foto' => $image_path
-            ]);    
+            ]);
 
             return response()->json([
                 'message' => 'success',
