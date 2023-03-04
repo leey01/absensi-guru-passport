@@ -87,6 +87,97 @@ class KehadiranController extends Controller
         $result_pulang = [];
 
 
+        // starttime dan search ada
+        if (isset($startTime) && isset($search) ? true : false) {
+
+
+            // search masuk
+            $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->where('keterangan', 'masuk')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->with('user')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            // search pulang
+            $result_pulang = Absensi::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->where('keterangan', 'pulang')
+                ->whereBetween('tanggal_pulang', [$startTime, $endTime])
+                ->with('user')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            return response()->json([
+                'message' => 'history kehadiran',
+                'data' => [
+                    'jml_kehadiran' => [
+                        'jml_karyawan' => [],
+                        'jml_masuk' => [],
+                        'jml_pulang' => [],
+                        'jml_absen' => []
+                    ],
+                    'list_absen' => [
+                        'masuk' => $result_masuk,
+                        'pulang' => $result_pulang
+                    ]
+                ]
+            ]);
+
+        }
+
+        // jika parameter start_time ada
+        if (isset($startTime) ? true : false) {
+
+            // Karyawan
+            $jmlKaryawan = User::all()
+                ->count();
+
+            // Jumlah masuk
+            $jmlMasuk = DB::table('absensis')
+                ->where('keterangan', 'masuk')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->count();
+            // Jumlah pulang
+            $jmlPulang = DB::table('absensis')
+                ->where('keterangan', 'pulang')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->count();
+            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
+
+            // list absen masuk pulang dengan paginate
+            $listMasuk = Absensi::with(['user'])
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->where('keterangan', 'masuk')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(12);
+
+            $listPulang = Absensi::with(['user'])
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->where('keterangan', 'pulang')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(12);
+
+
+            return response()->json([
+                'message' => 'history kehadiran',
+                'data' => [
+                    'jml_kehadiran' => [
+                        'jml_karyawan' => $jmlKaryawan,
+                        'jml_masuk' => $jmlMasuk,
+                        'jml_pulang' => $jmlPulang,
+                        'jml_absen' => $jmlAbsen
+                    ],
+                    'list_absen' => [
+                        'masuk' => $listMasuk,
+                        'pulang' => $listPulang
+                    ]
+                ]
+            ]);
+        }
+
+
         // jika parameter search ada
         if (isset($search) ? true : false) {
 
@@ -140,94 +231,6 @@ class KehadiranController extends Controller
             ]);
         }
 
-        // jika parameter start_time ada
-        if (isset($startTime) ? true : false) {
-
-            // Karyawan
-            $jmlKaryawan = User::all()
-                ->count();
-
-            // Jumlah masuk
-            $jmlMasuk = DB::table('absensis')
-                ->where('keterangan', 'masuk')
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->count();
-            // Jumlah pulang
-            $jmlPulang = DB::table('absensis')
-                ->where('keterangan', 'pulang')
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->count();
-            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
-
-            // list absen masuk pulang dengan paginate
-            $listMasuk = Absensi::with(['user'])
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->where('keterangan', 'masuk')
-                ->orderBy('created_at', 'DESC')
-                ->paginate(12);
-
-            $listPulang = Absensi::with(['user'])
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->where('keterangan', 'pulang')
-                ->orderBy('created_at', 'DESC')
-                ->paginate(12);
-
-
-            return response()->json([
-                'message' => 'history kehadiran',
-                'data' => [
-                    'jml_kehadiran' => [
-                        'jml_karyawan' => $jmlKaryawan,
-                        'jml_masuk' => $jmlMasuk,
-                        'jml_pulang' => $jmlPulang,
-                        'jml_absen' => $jmlAbsen
-                    ],
-                    'list_absen' => [
-                        'masuk' => $listMasuk,
-                        'pulang' => $listPulang
-                    ]
-                ]
-            ]);
-        }
-
-        // starttime dan search ada
-        if (isset($startTime) && isset($search) ? true : false) {
-
-            // search masuk
-            $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
-                $q->where('nama', 'like', '%'. $search .'%');
-            })->where('keterangan', 'masuk')
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->with('user')
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            // search pulang
-            $result_pulang = Absensi::whereHas('user', function ($q) use($search) {
-                $q->where('nama', 'like', '%'. $search .'%');
-            })->where('keterangan', 'pulang')
-                ->whereBetween('tanggal_pulang', [$startTime, $endTime])
-                ->with('user')
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            return response()->json([
-                'message' => 'history kehadiran',
-                'data' => [
-                    'jml_kehadiran' => [
-                        'jml_karyawan' => [],
-                        'jml_masuk' => [],
-                        'jml_pulang' => [],
-                        'jml_absen' => []
-                    ],
-                    'list_absen' => [
-                        'masuk' => $result_masuk,
-                        'pulang' => $result_pulang
-                    ]
-                ]
-            ]);
-
-        }
         // kondisi default
 
         // Karyawan
