@@ -38,6 +38,8 @@ class KehadiranResource extends JsonResource
           'longitude_pulang'=> $this->longitude_pulang,
           'latitude_masuk'=> $this->latitude_masuk,
           'latitude_pulang'=> $this->latitude_pulang,
+          'is_valid_masuk'=> $this->is_valid_masuk,
+          'is_valid_pulang'=> $this->is_valid_pulang,
             'user' => [
                 'nama' => $this->user->nama,
                 'email' => $this->user->email,
