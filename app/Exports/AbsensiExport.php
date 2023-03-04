@@ -25,19 +25,18 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
     {
         return [
             'id',
+            'niy',
             'nama',
             'keterangan',
             'catatan_masuk',
-            'catatan_pulang',
             'waktu_masuk',
-            'waktu_pulang',
             'tanggal_masuk',
-            'tanggal_pulang',
-            'foto_masuk',
-            'foto_pulang',
             'lokasi_masuk',
-            'lokasi_pulang',
             'tempat_absen_masuk',
+            'catatan_pulang',
+            'waktu_pulang',
+            'tanggal_pulang',
+            'lokasi_pulang',
             'tempat_absen_pulang',
             ];
     }
@@ -45,7 +44,7 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
     public function collection()
     {
         return Absensi::with(['user'])
-            ->whereBetween('created_at', [$this->start_time, $this->end_time])
+            ->whereBetween('tanggal_masuk', [$this->start_time, $this->end_time])
             ->get();
     }
 
@@ -65,19 +64,18 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
 
         return [
             $kehadiran->id,
+            $kehadiran->user->niy,
             $kehadiran->user->nama,
             $kehadiran->keterangan,
             $kehadiran->catatan_masuk,
-            $kehadiran->catatan_pulang,
             $kehadiran->waktu_masuk,
-            $kehadiran->waktu_pulang,
             $kehadiran->tanggal_masuk,
-            $kehadiran->tanggal_pulang,
-            $kehadiran->foto_masuk,
-            $kehadiran->foto_pulang,
             $kehadiran->lokasi_masuk,
-            $kehadiran->lokasi_pulang,
             $kehadiran->is_valid_masuk,
+            $kehadiran->catatan_pulang,
+            $kehadiran->waktu_pulang,
+            $kehadiran->tanggal_pulang,
+            $kehadiran->lokasi_pulang,
             $kehadiran->is_valid_pulang,
         ];
     }
