@@ -192,27 +192,12 @@ class KehadiranController extends Controller
 
         // starttime dan search ada
         if (isset($startTime) && isset($search) ? true : false) {
-            // Karyawan
-            $jmlKaryawan = User::all()
-                ->count();
-
-            // Jumlah masuk today
-            $jmlMasuk = DB::table('absensis')
-                ->where('keterangan', 'masuk')
-                ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-                ->count();
-            // Jumlah pulang today
-            $jmlPulang = DB::table('absensis')
-                ->where('keterangan', 'pulang')
-                ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-                ->count();
-            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
 
             // search masuk
             $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
                 $q->where('nama', 'like', '%'. $search .'%');
             })->where('keterangan', 'masuk')
-                ->whereBetween('created_at', [$startTime, $endTime])
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->with('user')
                 ->orderBy('created_at', 'DESC')
                 ->get();
@@ -221,7 +206,7 @@ class KehadiranController extends Controller
             $result_pulang = Absensi::whereHas('user', function ($q) use($search) {
                 $q->where('nama', 'like', '%'. $search .'%');
             })->where('keterangan', 'pulang')
-                ->whereBetween('created_at', [$startTime, $endTime])
+                ->whereBetween('tanggal_pulang', [$startTime, $endTime])
                 ->with('user')
                 ->orderBy('created_at', 'DESC')
                 ->get();
@@ -230,10 +215,10 @@ class KehadiranController extends Controller
                 'message' => 'history kehadiran',
                 'data' => [
                     'jml_kehadiran' => [
-                        'jml_karyawan' => $jmlKaryawan,
-                        'jml_masuk' => $jmlMasuk,
-                        'jml_pulang' => $jmlPulang,
-                        'jml_absen' => $jmlAbsen
+                        'jml_karyawan' => [],
+                        'jml_masuk' => [],
+                        'jml_pulang' => [],
+                        'jml_absen' => []
                     ],
                     'list_absen' => [
                         'masuk' => $result_masuk,
