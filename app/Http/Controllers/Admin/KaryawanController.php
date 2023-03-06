@@ -85,7 +85,7 @@ class KaryawanController extends Controller
             try {
 //            $image_path = $request->file('pf_foto')->store('/profile');
 
-            $foto_path = '/profile' . time() . $request->pf_foto->getClientOriginalName();
+            $foto_path = 'profile/' . time() . $request->pf_foto->getClientOriginalName();
             Storage::disk('public')->put($foto_path, file_get_contents($request->pf_foto));
             $image_path = Storage::disk('public')->url($foto_path);
 
