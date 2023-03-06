@@ -70,7 +70,6 @@ class KaryawanController extends Controller
             'nama' => ['required'],
             'email' => ['required', 'email'],
             'niy' => ['required'],
-            'password' => ['required'],
             'alamat' => ['required'],
             'no_hp' => ['required'],
             'jenis_user' => ['required'],
