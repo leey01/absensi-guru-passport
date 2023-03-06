@@ -98,7 +98,7 @@ class KaryawanController extends Controller
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
                 'jenis_user' => $request->jenis_user,
-                'pf_foto' => $image_path
+                'pf_foto' => $foto_path
             ]);
 
             return response()->json([
@@ -159,7 +159,7 @@ class KaryawanController extends Controller
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
                 'jenis_user' => $request->jenis_user,
-                'pf_foto' => $image_path,
+                'pf_foto' => $foto_path,
                 ]);
             return response()->json([
                 'message' => 'success',
