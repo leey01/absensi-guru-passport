@@ -59,7 +59,7 @@ class KaryawanController extends Controller
         $user = User::find($id);
         return response()->json([
             'message' => 'success',
-            'user' => $user
+            'user' => new KaryawanResource($user)
         ]);
     }
 
@@ -84,7 +84,11 @@ class KaryawanController extends Controller
             ], 400);
         } else{
             try {
-            $image_path = $request->file('pf_foto')->store('/profile');
+//            $image_path = $request->file('pf_foto')->store('/profile');
+
+            $foto_path = '/profile' . time() . $request->pf_foto->getClientOriginalName();
+            Storage::disk('public')->put($foto_path, file_get_contents($request->pf_foto));
+            $image_path = Storage::disk('public')->url($foto_path);
 
             $user = User::create([
                 'nama' => $request->nama,
@@ -129,7 +133,7 @@ class KaryawanController extends Controller
             'pf_foto' => ['image:jpeg,png,jpg', 'file']
         ]);
 
-        $image_path = $request->file('pf_foto')->store('/profile');
+//        $image_path = $request->file('pf_foto')->store('/profile');
 
         if ($validator->fails()) {
             return response()->json([
@@ -143,8 +147,11 @@ class KaryawanController extends Controller
         }
 
         try {
-            $image_path = $request->file('pf_foto')->store('/profile');
+//            $image_path = $request->file('pf_foto')->store('/profile');
 
+            $foto_path = '/profile' . time() . $request->pf_foto->getClientOriginalName();
+            Storage::disk('public')->put($foto_path, file_get_contents($request->pf_foto));
+            $image_path = Storage::disk('public')->url($foto_path);
 
             $user = User::where('id', $request->id)->update([
                 'nama' => $request->nama,
