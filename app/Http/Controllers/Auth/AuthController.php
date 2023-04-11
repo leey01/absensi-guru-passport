@@ -11,7 +11,15 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $user = User::where('niy', $request->niy)->first();
+        try {
+            $user = User::where('niy', $request->niy)->first();
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'user not found',
+                'errors' => $th->getMessage()
+            ], $th->getCode());
+        }
+
 
         if ($user->niy == $request->niy && Hash::check($request->password, $user->password)){
             $token = $user->createToken('token-name')->plainTextToken;
