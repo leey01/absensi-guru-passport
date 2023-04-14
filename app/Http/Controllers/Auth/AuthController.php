@@ -11,30 +11,28 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        try {
-            $user = User::where('niy', $request->niy)->first();
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'user not found',
-                'errors' => $th->getMessage()
-            ], $th->getCode());
-        }
+        $user = User::where('niy', $request->niy)->first();
 
+        if (!$user) {
+            return response()->json([
+                'messege' => 'user not found'
+            ], 404);
+        }
 
         if ($user->niy == $request->niy && Hash::check($request->password, $user->password)){
             $token = $user->createToken('token-name')->plainTextToken;
 
             return response()->json([
                 'messege' => 'success',
-                'user' => $user,
                 'token' => $token
             ], 200);
-
+        } else {
+            return response()->json([
+                'messege' => 'wrong pass',
+            ], 400);
         }
 
-        return response()->json([
-            'messege' => 'UNAUTHORIZED'
-        ], 401);
+
 
     }
 
