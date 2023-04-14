@@ -39,6 +39,7 @@ class HomeController extends Controller
             $absen = Absensi::create([
                 'user_id' => Auth::user()->id,
                 'keterangan' => 'masuk',
+                'is_valid_masuk' => $request->is_valid_masuk,
                 'catatan_masuk' => $request->catatan_masuk,
                 'waktu_masuk' => Carbon::now()->format('h:i:s'),
                 'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
@@ -86,6 +87,7 @@ class HomeController extends Controller
 
             $absen->update([
                 'keterangan' => 'pulang',
+                'is_valid_pulang' => $request->is_valid_pulang,
                 'catatan_pulang' => $request->catatan_pulang,
                 'waktu_pulang' => Carbon::now()->format('h:i:s'),
                 'tanggal_pulang' => Carbon::now()->format('Y-m-d'),

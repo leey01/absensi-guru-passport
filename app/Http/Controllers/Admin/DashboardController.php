@@ -13,8 +13,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $tanggal = $request->tanggal ?? Carbon::now()->format('Y-m-d');
+
         // Karyawan
         $jmlKaryawan = User::all()
             ->count();
@@ -22,12 +24,12 @@ class DashboardController extends Controller
         // Jumlah masuk today
         $jmlMasuk = DB::table('absensis')
             ->where('keterangan', 'masuk')
-            ->whereDate('created_at', Carbon::now())
+            ->whereDate('created_at', $tanggal)
             ->count();
         // Jumlah pulang today
         $jmlPulang = DB::table('absensis')
             ->where('keterangan', 'pulang')
-            ->whereDate('created_at', Carbon::now())
+            ->whereDate('created_at', $tanggal)
             ->count();
         $jmlAbsen = $jmlKaryawan - ($jmlMasuk + $jmlPulang);
 
@@ -235,17 +237,4 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function donloadKehadiran()
-    {
-        $start_time = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $end_time = Carbon::now()->endOfMonth()->format('Y-m-d');
-        $bulan = Carbon::now()->format('m');
-//        return response()->json([
-//           'start' => $start_time,
-//           'end' => $end_time
-//        ]);
-
-        return Excel::download(new AbsensiExport($start_time, $end_time), "datakehadiran|bulan-$bulan.xlsx");
-//        return (new AbsensiExport($start_time, $end_time))->download("datakehadiran|bulan-$bulan.xlsx");
-    }
 }

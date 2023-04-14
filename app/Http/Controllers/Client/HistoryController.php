@@ -24,6 +24,13 @@ class HistoryController extends Controller
             ->whereDate('tanggal_masuk', $request->tanggal)
             ->first();
 
+        if ($absensi == null) {
+            return response()->json([
+                'messege' => 'data tidak ditemukan',
+                'data' => [],
+            ], 404);
+        }
+
         return response()->json([
             'messege' => 'success',
             'data' => new KehadiranResource($absensi)
@@ -39,6 +46,12 @@ class HistoryController extends Controller
             ->whereDate('tanggal_masuk', $tanggal_sekarang)
             ->first();
 
+        if ($absensi == null) {
+            return response()->json([
+                'messege' => 'data tidak ditemukan',
+                'data' => [],
+            ], 404);
+        }
 
         return response()->json([
             'messege' => 'success',

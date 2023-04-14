@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->enum('keterangan', ['masuk', 'pulang']);
+            $table->boolean('is_valid_masuk');
+            $table->boolean('is_valid_pulang')->nullable();
             $table->text('catatan_masuk')->nullable();
             $table->text('catatan_pulang')->nullable();
             $table->time('waktu_masuk');

@@ -25,53 +25,58 @@ class AbsensiExport implements FromCollection, WithHeadings, WithMapping, Should
     {
         return [
             'id',
+            'niy',
             'nama',
             'keterangan',
             'catatan_masuk',
-            'catatan_pulang',
             'waktu_masuk',
-            'waktu_pulang',
             'tanggal_masuk',
-            'tanggal_pulang',
-            'foto_masuk',
-            'foto_pulang',
             'lokasi_masuk',
+            'tempat_absen_masuk',
+            'catatan_pulang',
+            'waktu_pulang',
+            'tanggal_pulang',
             'lokasi_pulang',
-            'longitude_masuk',
-            'latitude_masuk',
-            'longitude_pulang',
-            'latitude_pulang',
-        ];
+            'tempat_absen_pulang',
+            ];
     }
 
     public function collection()
     {
-        return Absensi::with('user')
-            ->where('keterangan', 'pulang')
-            ->whereBetween('created_at', [$this->start_time, $this->end_time])
+        return Absensi::with(['user'])
+            ->whereBetween('tanggal_masuk', [$this->start_time, $this->end_time])
             ->get();
     }
 
     public function map($kehadiran): array
     {
+        if ($kehadiran->is_valid_masuk == 1) {
+            $kehadiran->is_valid_masuk = 'Di Sekolah';
+        } else {
+            $kehadiran->is_valid_masuk = 'Tidak Di Sekolah';
+        }
+
+        if ($kehadiran->is_valid_pulang == 1) {
+            $kehadiran->is_valid_pulang = 'Di Sekolah';
+        } else {
+            $kehadiran->is_valid_pulang = 'Tidak Di Sekolah';
+        }
+
         return [
             $kehadiran->id,
+            $kehadiran->user->niy,
             $kehadiran->user->nama,
             $kehadiran->keterangan,
             $kehadiran->catatan_masuk,
-            $kehadiran->catatan_pulang,
             $kehadiran->waktu_masuk,
-            $kehadiran->waktu_pulang,
             $kehadiran->tanggal_masuk,
-            $kehadiran->tanggal_pulang,
-            $kehadiran->foto_masuk,
-            $kehadiran->foto_pulang,
             $kehadiran->lokasi_masuk,
+            $kehadiran->is_valid_masuk,
+            $kehadiran->catatan_pulang,
+            $kehadiran->waktu_pulang,
+            $kehadiran->tanggal_pulang,
             $kehadiran->lokasi_pulang,
-            $kehadiran->longitude_masuk,
-            $kehadiran->latitude_masuk,
-            $kehadiran->longitude_pulang,
-            $kehadiran->latitude_pulang,
+            $kehadiran->is_valid_pulang,
         ];
     }
 }

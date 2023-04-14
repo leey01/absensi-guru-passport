@@ -13,20 +13,26 @@ class AuthController extends Controller
     {
         $user = User::where('niy', $request->niy)->first();
 
+        if (!$user) {
+            return response()->json([
+                'messege' => 'user not found'
+            ], 404);
+        }
+
         if ($user->niy == $request->niy && Hash::check($request->password, $user->password)){
-            $token = $user->createToken($user->nama)->accessToken;
+            $token = $user->createToken('token-name')->plainTextToken;
 
             return response()->json([
                 'messege' => 'success',
-                'user' => $user,
                 'token' => $token
             ], 200);
-
+        } else {
+            return response()->json([
+                'messege' => 'wrong pass',
+            ], 400);
         }
 
-        return response()->json([
-            'messege' => 'UNAUTHORIZED'
-        ], 401);
+
 
     }
 
