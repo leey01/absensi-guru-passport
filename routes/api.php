@@ -27,10 +27,11 @@ use App\Http\Controllers\Client\ProfileController;
 
 Route::get('/', function () {
     return response()->json([
-        'error' => '401',
         'message' => 'authentication required'
     ], 401);
 })->name('login');
+
+Route::get('/testnotif', [KalenderController::class, 'notifEventToday']);
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -48,19 +49,22 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
     Route::get('/', [HomeController::class, 'kehadiran']);
     Route::post('/absen-masuk', [HomeController::class, 'absenMasuk']);
-    Route::post('/absen-pulang', [HomeController::class, 'absenPulang']);
+    Route::post('/izin', [HomeController::class, 'izin']);
+    Route::post('/absen-pulang/{id}', [HomeController::class, 'absenPulang']);
+    Route::get('/jadwal', [HomeController::class, 'jadwalAbsen']);
 });
 
 // Route History
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
-    Route::get('/', [HistoryController::class, 'default']);
-    Route::get('/otherdate', [HistoryController::class, 'index']);
+    Route::get('/absen', [HistoryController::class, 'absen']);
+    Route::get('/izin', [HistoryController::class, 'izin']);
+    Route::get('/recap', [HistoryController::class, 'recap']);
 });
 
 // Route Calender
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'calendar'], function () {
     Route::get('/', [KalenderController::class, 'index']);
-    Route::get('/otherdate', [KalenderController::class, 'otherDate']);
+    Route::get('/show/{id}', [KalenderController::class, 'show']);
     Route::get('/notifevent', [KalenderController::class, 'notifEvent']);
 });
 
@@ -68,7 +72,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'calendar'], function 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'profile'], function () {
     Route::get('/', [ProfileController::class, 'index']);
     Route::get('/detail', [ProfileController::class, 'show']);
-    Route::post('/reset-password', [ProfileController::class, 'resetPassword']);
+    Route::post('/reset-pw', [ProfileController::class, 'resetPassword']);
 });
 
 
@@ -99,7 +103,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'karyawa
     Route::get('/delete-user/{id}', [KaryawanController::class, 'deleteUser']);
 });
 
-// Route Admin Kalender
+// Route Admin Event
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kalender'], function () {
     Route::get('/', [\App\Http\Controllers\Admin\KalenderController::class, 'index']);
     Route::post('/create', [\App\Http\Controllers\Admin\KalenderController::class, 'store']);

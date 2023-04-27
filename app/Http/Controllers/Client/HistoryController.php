@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KehadiranResource;
+use App\Models\Izin;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use Carbon\Carbon;
@@ -17,45 +20,113 @@ class HistoryController extends Controller
      *
      */
 
-    public function index(Request $request)
+    public function absen(Request $request)
     {
-        // data absensi berdasarkan id user dan tanggal yg diinputkan user
-        $absensi = Absensi::where('user_id', Auth::user()->id)
-            ->whereDate('tanggal_masuk', $request->tanggal)
-            ->first();
+        $validator = Validator::make(request()->all(), [
+            'tanggal' => 'required',
+        ]);
 
-        if ($absensi == null) {
+        if ($validator->fails()){
             return response()->json([
-                'messege' => 'data tidak ditemukan',
-                'data' => [],
-            ], 404);
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        try {
+            // data absensi berdasarkan id user dan tanggal yg diinputkan user
+            $absensi = Absensi::where('user_id', Auth::user()->id)
+                ->whereDate('tanggal_masuk', $request->tanggal)
+                ->first();
+
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed",
+                'data' => $e
+            ], 503);
         }
 
         return response()->json([
             'messege' => 'success',
-            'data' => new KehadiranResource($absensi)
+            'data' => [
+                'absen' => new KehadiranResource($absensi),
+            ]
         ], 200);
 
     }
 
-    public function default()
+    public function izin(Request $request)
     {
-        // data absensi berdasarkan id user dan tanggal sekarang
-        $tanggal_sekarang = Carbon::now()->format('Y-m-d');
-        $absensi = Absensi::where('user_id', Auth::user()->id)
-            ->whereDate('tanggal_masuk', $tanggal_sekarang)
-            ->first();
+        $validator = Validator::make(request()->all(), [
+            'tanggal' => 'required',
+        ]);
 
-        if ($absensi == null) {
+        if ($validator->fails()){
             return response()->json([
-                'messege' => 'data tidak ditemukan',
-                'data' => [],
-            ], 404);
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
         }
+
+        try {
+            // data absensi berdasarkan id user dan tanggal yg diinputkan user
+            $izin = Izin::where('user_id', Auth::user()->id)
+                ->whereDate('mulai_izin', '<=', $request->tanggal)
+                ->whereDate('selesai_izin', '>=', $request->tanggal)
+                ->first();
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed",
+                'data' => $e
+            ], 503);
+        }
+
+        $izin->path_file = Storage::disk('public')->url($izin->path_file);
 
         return response()->json([
             'messege' => 'success',
-            'data' => new KehadiranResource($absensi)
+            'data' => $izin
+        ], 200);
+
+    }
+
+    public function recap(Request $request)
+    {
+        $validator = Validator::make(request()->all(), [
+            'bulan' => 'required',
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $bulan = $request->bulan;
+
+        try {
+            $absen = Absensi::where('user_id', Auth::user()->id)
+                ->whereMonth('tanggal_masuk', $bulan)
+                ->get();
+
+            $izin = Izin::where('user_id', Auth::user()->id)
+                ->whereMonth('mulai_izin', $bulan)
+                ->get();
+
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed",
+                'data' => $e
+            ], 503);
+        }
+
+        return response()->json([
+            'message' => "success",
+            'data' => [
+                'absen' => $absen,
+                'izin' => $izin
+            ]
         ], 200);
 
     }

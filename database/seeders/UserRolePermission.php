@@ -1,14 +1,12 @@
 <?php
 
+
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 
 class UserRolePermission extends Seeder
 {
@@ -32,7 +30,6 @@ class UserRolePermission extends Seeder
             'email' => 'it@gmail.com',
             'alamat' => 'Temanggung',
             'no_hp' => '081234536675',
-            'jenis_user' => 'staff'
         ], $default_user_value));
 
         $staff = User::create(array_merge([
@@ -41,7 +38,6 @@ class UserRolePermission extends Seeder
             'email' => 'staff@gmail.com',
             'alamat' => 'Kudus',
             'no_hp' => '081245673455',
-            'jenis_user' => 'staff'
         ], $default_user_value));
 
         $guru_anim = User::create(array_merge([
@@ -50,7 +46,6 @@ class UserRolePermission extends Seeder
             'email' => 'anim@gmail.com',
             'alamat' => 'Semarang',
             'no_hp' => '082466527865',
-            'jenis_user' => 'pengajar'
         ], $default_user_value));
 
         $guru_rpl = User::create(array_merge([
@@ -59,7 +54,6 @@ class UserRolePermission extends Seeder
             'email' => 'erpeel@gmail.com',
             'alamat' => 'Semarang',
             'no_hp' => '082466527865',
-            'jenis_user' => 'pengajar'
         ], $default_user_value));
 
         $guru_dkv = User::create(array_merge([
@@ -67,20 +61,7 @@ class UserRolePermission extends Seeder
             'nama' => 'Guru DKV',
             'email' => 'dekape@gmail.com',
             'alamat' => 'Semarang',
-            'no_hp' => '082345675434',
-            'jenis_user' => 'pengajar'
+            'no_hp' => '082345675434'
         ], $default_user_value));
-
-        // create role
-        $role_it = Role::create(['name' => 'it']);
-        $role_staff = Role::create(['name' => 'staff']);
-        $role_guru = Role::create(['name' => 'guru']);
-
-        // assigning role to user
-        $it->assignRole('it');
-        $staff->assignRole('staff');
-        $guru_anim->assignRole('guru');
-        $guru_rpl->assignRole('guru');
-        $guru_dkv->assignRole('guru');
     }
 }

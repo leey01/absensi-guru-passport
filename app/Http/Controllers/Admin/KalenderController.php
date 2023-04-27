@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Kalender;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +12,7 @@ class KalenderController extends Controller
     public function index()
     {
         $events = array();
-        $bookings = Kalender::all();
+        $bookings = Event::all();
         foreach ($bookings as $booking) {
             $events[] = [
                 'id'=>$booking->id,
@@ -33,7 +33,7 @@ class KalenderController extends Controller
         $request->validate([
             'judul'=>'required|string|max:255',
           ]);
-          $booking = Kalender::create([
+          $booking = Event::create([
                   'user_id'=> Auth::user()->id,
                   'judul'=>$request->judul,
                   'deskripsi'=>$request->deskripsi,
@@ -47,7 +47,7 @@ class KalenderController extends Controller
 
     public function update($id)
     {
-        $booking = Kalender::find($id);
+        $booking = Event::find($id);
 
         return response()->json([
             'message'=>'Data event',
@@ -61,7 +61,7 @@ class KalenderController extends Controller
         'judul'=>'required|string|max:255',
       ]);
 
-       $booking = Kalender::find($request->id);
+       $booking = Event::find($request->id);
        $booking->judul = $request->judul;
        $booking->tanggal = $request->tanggal;
        $booking->deskripsi = $request->deskripsi;
@@ -78,7 +78,7 @@ class KalenderController extends Controller
 
     public function destroy($id)
     {
-      $booking = Kalender::find($id);
+      $booking = Event::find($id);
       if (! $booking) {
         return response()->json([
           'error'=>'Unable to locate the event'

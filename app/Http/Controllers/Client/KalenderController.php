@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Models\Kalender;
+use App\Events\NotifEvent;
+use App\Models\Event;
+use App\Models\Peserta;
+use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -13,33 +18,41 @@ class KalenderController extends Controller
 {
     public function index()
     {
-        $events = array();
-        $bookings = Kalender::all();
-        foreach ($bookings as $booking) {
-            $events[] = [
-                'id'=>$booking->id,
-                'user_id'=>$booking->user_id,
-                'judul'=>$booking->judul,
-                'deskripsi'=>$booking->deskripsi,
-                'tanggal'=>$booking->tanggal,
-                'untuk'=>$booking->untuk,
-                'is_libur'=>$booking->is_libur
-            ];
+        try {
+            $events = User::where('id', auth()->user()->id)
+                ->with('event')
+                ->first();
+
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed",
+                'data' => $e
+            ], 503);
         }
 
-        return response()->json(['events'=>$events]);
+        return response()->json([
+            'message' => 'success',
+            'data' => $events
+        ]);
     }
 
-    public function otherDate(Request $request)
+    public function show($id)
     {
-        $tanggal = $request->tanggal;
+        try {
 
-        $events = DB::table('kalenders')
-            ->whereDate('tanggal', $tanggal)
-            ->get();
+            $event = Event::with('peserta')
+                ->find($id);
+
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed",
+                'data' => $e
+            ], 503);
+        }
 
         return response()->json([
-            'data' => $events
+            'message' => 'success',
+            'data' => $event
         ]);
     }
 
@@ -50,7 +63,7 @@ class KalenderController extends Controller
             // ->whereDate('tanggal', Carbon::now())
             ->whereDate('tanggal', '>=', today()->toDateString())
             ->exists();
- 
+
         if ($checkEvent) {
             $event = DB::table('kalenders')
                 // ->whereDate('tanggal', Carbon::now())
@@ -61,6 +74,20 @@ class KalenderController extends Controller
         return response()->json([
             'message' => 'event hari ini',
             'data' => $event
+        ]);
+    }
+
+    public function notifEventToday()
+    {
+        $events = Event::with('peserta')
+//            ->whereDate('tanggal', Carbon::now())
+            ->get();
+
+        event(new NotifEvent($events));
+
+        return response()->json([
+            'message' => 'event hari ini',
+            'data' => $events
         ]);
     }
 }
