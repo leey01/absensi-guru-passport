@@ -71,7 +71,7 @@ class ProfileController extends Controller
     public function show()
     {
         $user = User::where('id', Auth::user()->id)
-            ->with(['ktgkaryawan', 'isAdmin'])
+            ->with(['ktgkaryawan'])
             ->first();
         return response()->json([
             'message' => 'success',
