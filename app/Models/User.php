@@ -67,15 +67,6 @@ class User extends Authenticatable
         return $this->belongsToMany(KategoriKaryawan::class, 'kategori_karyawan_users', 'user_id', 'kategori_id');
     }
 
-    public function isAdmin()
-    {
-        if ($this->ktgkaryawan()->id == 1) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function event()
     {
         return $this->belongsToMany(Event::class, 'pesertas', 'user_id', 'event_id');
