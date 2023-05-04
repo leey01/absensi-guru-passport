@@ -65,7 +65,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function (
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'calendar'], function () {
     Route::get('/', [KalenderController::class, 'index']);
     Route::get('/show/{id}', [KalenderController::class, 'show']);
-    Route::get('/notifevent', [KalenderController::class, 'notifEvent']);
+    Route::get('/notifevent', [KalenderController::class, 'notifEventToday']);
 });
 
 // Route Profile

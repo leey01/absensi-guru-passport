@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class KalenderController extends Controller
@@ -80,10 +81,14 @@ class KalenderController extends Controller
     public function notifEventToday()
     {
         $events = Event::with('peserta')
-//            ->whereDate('tanggal', Carbon::now())
+            ->whereDate('waktu_mulai', Carbon::now())
             ->get();
 
-        event(new NotifEvent($events));
+        foreach ($events as $event) {
+            foreach ($event->peserta as $peserta) {
+                event(new NotifEvent($peserta->id, $event->id));
+            }
+        }
 
         return response()->json([
             'message' => 'event hari ini',
