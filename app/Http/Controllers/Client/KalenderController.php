@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Events\NotifEvent;
+use App\Jobs\NotifEventJob;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\User;
@@ -84,11 +85,15 @@ class KalenderController extends Controller
             ->whereDate('waktu_mulai', Carbon::now())
             ->get();
 
-        foreach ($events as $event) {
-            foreach ($event->peserta as $peserta) {
-                event(new NotifEvent($peserta->id, $event->id));
-            }
-        }
+//        foreach ($events as $event) {
+//            foreach ($event->peserta as $peserta) {
+//                event(new NotifEvent($peserta->id, $event->id));
+//            }
+//        }
+
+        // nge dispatch job untuk broadcast notif
+        $eventJob = new NotifEventJob();
+        $this->dispatch($eventJob);
 
         return response()->json([
             'message' => 'event hari ini',
