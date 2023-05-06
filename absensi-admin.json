@@ -1,0 +1,412 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Absensi - Admin RESTful API",
+        "description": "Dokumentasi API Absensi for Admin",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Sejati Adli",
+            "email": "adlisejati@gmail.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://absensiguru.smkrus.com/api",
+            "description": "Absensi RESTful API Server"
+        }
+    ],
+    "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login User",
+                "parameters": [
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "niy": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "guru": {
+                                    "description": "Contoh user guru",
+                                    "value": {
+                                        "niy": "89282132",
+                                        "password": "password"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "respons": {
+                                        "value": {
+                                            "messege": "success",
+                                            "token": "4|poNn9fewZicSOyCpSzbvBU2SjoegKzyZYynMcmGf"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong Password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthRespons"
+                                },
+                                "examples": {
+                                    "respons": {
+                                        "value": {
+                                            "messege": "wrong pass"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthRespons"
+                                },
+                                "examples": {
+                                    "respons": {
+                                        "value": {
+                                            "messege": "user not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout User",
+                "responses": {
+                    "200": {
+                        "description": "Success logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthRespons"
+                                },
+                                "examples": {
+                                    "respons": {
+                                        "value": {
+                                            "messege": "user logged out"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Dashboard(Admin)"
+                ],
+                "summary": "Page Dashboard",
+                "description": "Untuk data diagram lingkaran ",
+                "parameters": [
+                    {
+                        "name": "tanggal",
+                        "in": "query",
+                        "description": "tanggal untuk filter data",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "tanggal": {
+                                "value": "2023-05-3"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DashboardSchema"
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "messege": "success",
+                                            "data": {
+                                                "jml_kehadiran": {
+                                                    "jml_karyawan": 10,
+                                                    "jml_masuk": 10,
+                                                    "jml_izin": 10,
+                                                    "jml_absen": 10
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/statistik": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Dashboard(Admin)"
+                ],
+                "summary": "Statistik Dashboard",
+                "description": "Data dibawah adalah data statistik dengan urutan tanggal ascending",
+                "responses": {
+                    "200": {
+                        "description": "Success get data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DashboardStatistikSchema"
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "date": "2023-05-03",
+                                                    "count": 1
+                                                },
+                                                {
+                                                    "date": "2023-05-05",
+                                                    "count": 1
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/jadwal": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Dashboard(Admin)"
+                ],
+                "summary": "Event Terdekat",
+                "description": "Data dibawah adalah data jadwal event terdekat",
+                "responses": {
+                    "200": {
+                        "description": "Success get data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DashboardJadwalSchema"
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 2,
+                                                    "judul": "excepturi eius et",
+                                                    "kategori_event": "event",
+                                                    "lokasi": "Gunnerland",
+                                                    "waktu_mulai": "2023-05-06 07:23:11",
+                                                    "waktu_selesai": "0000-00-00 00:00:00",
+                                                    "deskripsi": "Atque quia sit minus. Autem deserunt reiciendis et voluptatem."
+                                                },
+                                                {
+                                                    "id": 1,
+                                                    "judul": "vitae aut molestiae",
+                                                    "kategori_event": "libur",
+                                                    "lokasi": "East Alizebury",
+                                                    "waktu_mulai": "2023-05-06 10:32:39",
+                                                    "waktu_selesai": "0000-00-00 00:00:00",
+                                                    "deskripsi": "Voluptatem veniam et id dolores maxime accusantium expedita. Quasi ut voluptatem et omnis nihil. Nam a distinctio a nulla animi. Sequi hic soluta aut debitis blanditiis voluptatem."
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AuthRespons": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DashboardSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "jml_kehadiran": {
+                                "type": "object",
+                                "properties": {
+                                    "jml_karyawan": {
+                                        "type": "integer"
+                                    },
+                                    "jml_masuk": {
+                                        "type": "integer"
+                                    },
+                                    "jml_izin": {
+                                        "type": "integer"
+                                    },
+                                    "jml_absen": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DashboardStatistikSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "count": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DashboardJadwalSchema": {
+                "type": "object",
+                "properties": {
+                    "message":{
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EventSchema"
+                        }
+                    }
+                }
+            },
+            "EventSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "judul": {
+                        "type": "string"
+                    },
+                    "kategori_event": {
+                        "type": "string",
+                        "enum": [
+                            "event",
+                            "libur"
+                        ]
+                    },
+                    "lokasi": {
+                        "type": "string"
+                    },
+                    "waktu_mulai": {
+                        "type": "datetime"
+                    },
+                    "waktu_selesai": {
+                        "type": "datetime"
+                    },
+                    "deskripsi": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
