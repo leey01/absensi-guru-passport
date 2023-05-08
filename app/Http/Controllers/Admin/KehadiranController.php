@@ -6,6 +6,7 @@ use App\Exports\AbsensiExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KehadiranResource;
 use App\Models\Absensi;
+use App\Models\Izin;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -278,6 +279,92 @@ class KehadiranController extends Controller
                     'pulang' => $listPulang
                 ]
             ]
+        ]);
+    }
+
+    public function jmlKehadiran(Request $request)
+    {
+        if ($request->start_time) {
+            $startTime = $request->start_time;
+        } else if ($request->end_time) {
+            $startTime = $request->start_time;
+            $endTime = $request->end_time;
+        } else {
+            $startTime = Carbon::now()->format('Y-m-d');
+            $endTime = Carbon::now()->format('Y-m-d');
+        }
+
+        // Karyawan
+        $jmlKaryawan = User::all()
+            ->count();
+
+        // Jumlah masuk
+        $jmlMasuk = Absensi::where('keterangan', 'masuk')
+            ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+            ->count();
+        $jmlIzin = Izin::where();
+        $jmlAbsen = $jmlKaryawan - $jmlMasuk;
+    }
+
+    public function testKehadiran(Request $request)
+    {
+        $jmlKaryawan = User::all()
+            ->count();
+        $jmlKehadiran = 0;
+        $jmlIzin = 0;
+        $jmlAbsen = 0;
+
+        if ($request->end_time) {
+            $startTime = $request->start_time;
+            $endTime = $request->end_time;
+
+            $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
+                ->whereBetween('tanggal_pulang', [$startTime, $endTime])
+                ->count();
+            $jmlIzin = DB::table('izins')
+                ->whereDate('selesai_izin', '<=', $startTime)
+//                ->whereDate('mulai_izin', '<=', $startTime)
+                    ->orWhereBetween('mulai_izin', [$startTime, $endTime])
+                ->orWhereBetween('selesai_izin', [$startTime, $endTime])
+
+                ->orWhereDate('selesai_izin', '>=', $startTime)
+                ->count();
+            $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+                ->where('tanggal_masuk', $startTime)
+                ->count();
+
+        } else if ($request->start_time) {
+            $startTime = $request->start_time;
+            $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
+                ->where('tanggal_pulang', $startTime)
+                ->count();
+            $jmlIzin = DB::table('izins')
+                ->whereDate('mulai_izin', '<=', $startTime)
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->count();
+            $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+                ->where('tanggal_masuk', $startTime)
+                ->count();
+
+        } else {
+            $startTime = Carbon::now()->format('Y-m-d');
+
+            $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
+                ->where('tanggal_pulang', $startTime)
+                ->count();
+            $jmlIzin = Izin::whereDate('mulai_izin', '<=', $startTime)
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->count();
+            $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+                ->where('tanggal_masuk', $startTime)
+                ->count();
+        }
+
+        return response()->json([
+            'jml_karyawan' => $jmlKaryawan,
+            'jml_kehadiran' => $jmlKehadiran,
+            'jml_izin' => $jmlIzin,
+            'jml_absen' => $jmlAbsen
         ]);
     }
 

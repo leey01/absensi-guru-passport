@@ -90,6 +90,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadir
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
     Route::get('/kehadiran-terbaru', [KehadiranController::class, 'kehadiranTerbaru']);
     Route::post('/search', [KehadiranController::class, 'search']);
+    Route::get('/test', [KehadiranController::class, 'testKehadiran']);
 });
 
 // Route Admin Karyawan
