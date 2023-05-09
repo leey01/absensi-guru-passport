@@ -199,7 +199,7 @@ class HomeController extends Controller
             'user' => [
                 'name' => $user->nama,
                 'email' => $user->email,
-                'id_absen' => $dataAbsenMasuk->id,
+                'id_absen' => $dataAbsenMasuk->id ?? 0
             ],
             'jadwal_absen' => [
                 'masuk' => $jadwalMasuk,
