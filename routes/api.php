@@ -87,6 +87,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'dashboa
 // Route Admin Kehadiran
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadiran'], function () {
     Route::get('/', [KehadiranController::class, 'kehadiran']);
+    Route::get('/jml-kehadiran', [KehadiranController::class, 'jmlKehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
     Route::get('/kehadiran-terbaru', [KehadiranController::class, 'kehadiranTerbaru']);
     Route::post('/search', [KehadiranController::class, 'search']);

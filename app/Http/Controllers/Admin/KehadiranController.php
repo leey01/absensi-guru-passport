@@ -87,17 +87,14 @@ class KehadiranController extends Controller
         $result_masuk = [];
         $result_pulang = [];
 
-
         // starttime dan search ada
         if (isset($startTime) && isset($search) ? true : false) {
-
-
             // search masuk
             $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
                 $q->where('nama', 'like', '%'. $search .'%');
             })->where('keterangan', 'masuk')
                 ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->with('user')
+                ->with(['user'])
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
@@ -106,23 +103,25 @@ class KehadiranController extends Controller
                 $q->where('nama', 'like', '%'. $search .'%');
             })->where('keterangan', 'pulang')
                 ->whereBetween('tanggal_pulang', [$startTime, $endTime])
-                ->with('user')
+                ->with(['user'])
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            // search izin
+            $result_izin = Izin::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->whereDate('selesai_izin', '>=', $startTime)
+                ->whereDate('mulai_izin', '<=', $endTime)
+                ->with(['user'])
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
             return response()->json([
                 'message' => 'history kehadiran',
                 'data' => [
-                    'jml_kehadiran' => [
-                        'jml_karyawan' => [],
-                        'jml_masuk' => [],
-                        'jml_pulang' => [],
-                        'jml_absen' => []
-                    ],
-                    'list_absen' => [
-                        'masuk' => $result_masuk,
-                        'pulang' => $result_pulang
-                    ]
+                    'masuk' => $result_masuk,
+                    'pulang' => $result_pulang,
+                    'izin' => $result_izin
                 ]
             ]);
 
@@ -131,79 +130,43 @@ class KehadiranController extends Controller
         // jika parameter start_time ada
         if (isset($startTime) ? true : false) {
 
-            // Karyawan
-            $jmlKaryawan = User::all()
-                ->count();
-
-            // Jumlah masuk
-            $jmlMasuk = DB::table('absensis')
-                ->where('keterangan', 'masuk')
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->count();
-            // Jumlah pulang
-            $jmlPulang = DB::table('absensis')
-                ->where('keterangan', 'pulang')
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-                ->count();
-            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
-
             // list absen masuk pulang dengan paginate
             $listMasuk = Absensi::with(['user'])
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->where('keterangan', 'masuk')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->orderBy('created_at', 'DESC')
-                ->paginate(12);
+                ->get();
 
             $listPulang = Absensi::with(['user'])
-                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->where('keterangan', 'pulang')
+                ->whereBetween('tanggal_pulang', [$startTime, $endTime])
                 ->orderBy('created_at', 'DESC')
-                ->paginate(12);
+                ->get();
 
+            $listIzin = Izin::with(['user'])
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->whereDate('mulai_izin', '<=', $endTime)
+                ->orderBy('created_at', 'DESC')
+                ->get();
 
             return response()->json([
                 'message' => 'history kehadiran',
                 'data' => [
-                    'jml_kehadiran' => [
-                        'jml_karyawan' => $jmlKaryawan,
-                        'jml_masuk' => $jmlMasuk,
-                        'jml_pulang' => $jmlPulang,
-                        'jml_absen' => $jmlAbsen
-                    ],
-                    'list_absen' => [
-                        'masuk' => $listMasuk,
-                        'pulang' => $listPulang
-                    ]
+                    'masuk' => $listMasuk,
+                    'pulang' => $listPulang,
+                    'izin' => $listIzin
                 ]
             ]);
         }
 
-
         // jika parameter search ada
         if (isset($search) ? true : false) {
-
-            // Karyawan
-            $jmlKaryawan = User::all()
-                ->count();
-
-
-            // Jumlah masuk
-            $jmlMasuk = DB::table('absensis')
-                ->where('keterangan', 'masuk')
-                ->whereDate('created_at', Carbon::now())
-                ->count();
-            // Jumlah pulang
-            $jmlPulang = DB::table('absensis')
-                ->where('keterangan', 'pulang')
-                ->whereDate('created_at', Carbon::now())
-                ->count();
-            $jmlAbsen = $jmlKaryawan - $jmlMasuk;
-
             // search masuk
             $result_masuk = Absensi::whereHas('user', function ($q) use($search) {
                 $q->where('nama', 'like', '%'. $search .'%');
             })->where('keterangan', 'masuk')
-                ->with('user')
+                ->whereDate('tanggal_masuk', Carbon::now())
+                ->with(['user'])
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
@@ -211,99 +174,131 @@ class KehadiranController extends Controller
             $result_pulang = Absensi::whereHas('user', function ($q) use($search) {
                 $q->where('nama', 'like', '%'. $search .'%');
             })->where('keterangan', 'pulang')
-                ->with('user')
+                ->whereDate('tanggal_masuk', Carbon::now())
+                ->with(['user'])
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            // search izin
+            $result_izin = Izin::whereHas('user', function ($q) use($search) {
+                $q->where('nama', 'like', '%'. $search .'%');
+            })->whereDate('mulai_izin', '<=', Carbon::now())
+                ->whereDate('selesai_izin', '>=', Carbon::now())
+                ->with(['user'])
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
             return response()->json([
                 'message' => 'history kehadiran',
                 'data' => [
-                    'jml_kehadiran' => [
-                        'jml_karyawan' => $jmlKaryawan,
-                        'jml_masuk' => $jmlMasuk,
-                        'jml_pulang' => $jmlPulang,
-                        'jml_absen' => $jmlAbsen
-                    ],
-                    'list_absen' => [
-                        'masuk' => $result_masuk,
-                        'pulang' => $result_pulang
-                    ]
+                    'masuk' => $result_masuk,
+                    'pulang' => $result_pulang,
+                    'izin' => $result_izin
                 ]
             ]);
         }
 
         // kondisi default
-
-        // Karyawan
-        $jmlKaryawan = User::all()
-            ->count();
-
-
-        // Jumlah masuk
-        $jmlMasuk = DB::table('absensis')
-            ->where('keterangan', 'masuk')
-            ->whereDate('created_at', Carbon::now())
-            ->count();
-        // Jumlah pulang
-        $jmlPulang = DB::table('absensis')
-            ->where('keterangan', 'pulang')
-            ->whereDate('created_at', Carbon::now())
-            ->count();
-        $jmlAbsen = $jmlKaryawan - $jmlMasuk;
-
-
         // list absen masuk pulang dengan paginate
         $listMasuk = Absensi::with(['user'])
-            ->whereDate('created_at', Carbon::now())
             ->where('keterangan', 'masuk')
+            ->whereDate('tanggal_masuk', Carbon::now())
             ->orderBy('created_at', 'DESC')
-            ->paginate(12);
+            ->get();
 
         $listPulang = Absensi::with(['user'])
-            ->whereDate('created_at', Carbon::now())
             ->where('keterangan', 'pulang')
+            ->whereDate('tanggal_pulang', Carbon::now())
             ->orderBy('created_at', 'DESC')
-            ->paginate(12);
+            ->get();
+
+        $listIzin = Izin::with(['user'])
+            ->whereDate('mulai_izin', '<=', Carbon::now())
+            ->whereDate('selesai_izin', '>=', Carbon::now())
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         return response()->json([
             'message' => 'history kehadiran',
             'data' => [
-                'jml_kehadiran' => [
-                    'jml_karyawan' => $jmlKaryawan,
-                    'jml_masuk' => $jmlMasuk,
-                    'jml_pulang' => $jmlPulang,
-                    'jml_absen' => $jmlAbsen
-                ],
-                'list_absen' => [
-                    'masuk' => $listMasuk,
-                    'pulang' => $listPulang
-                ]
+                'masuk' => $listMasuk,
+                'pulang' => $listPulang,
+                'izin' => $listIzin
             ]
         ]);
     }
 
     public function jmlKehadiran(Request $request)
     {
-        if ($request->start_time) {
-            $startTime = $request->start_time;
-        } else if ($request->end_time) {
-            $startTime = $request->start_time;
-            $endTime = $request->end_time;
-        } else {
-            $startTime = Carbon::now()->format('Y-m-d');
-            $endTime = Carbon::now()->format('Y-m-d');
+        $validator = Validator::make($request->all(), [
+            'start_time' => 'date_format:Y-m-d',
+            'end_time' => 'date_format:Y-m-d'
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
         }
 
-        // Karyawan
-        $jmlKaryawan = User::all()
-            ->count();
+        $jmlKaryawan = User::all()->count();
+        $jmlKehadiran = 0;
+        $jmlIzin = 0;
+        $jmlAbsen = 0;
 
-        // Jumlah masuk
-        $jmlMasuk = Absensi::where('keterangan', 'masuk')
-            ->whereBetween('tanggal_masuk', [$startTime, $endTime])
-            ->count();
-        $jmlIzin = Izin::where();
-        $jmlAbsen = $jmlKaryawan - $jmlMasuk;
+        if ($request->end_time) {
+            $startTime = $request->start_time;
+            $endTime = $request->end_time;
+
+            $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
+                ->whereBetween('tanggal_pulang', [$startTime, $endTime])
+                ->count();
+            // menetapkan range
+            $jmlIzin = DB::table('izins')
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->whereDate('mulai_izin', '<=', $endTime)
+                ->count();
+            $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->count();
+
+        } else if ($request->start_time) {
+            $startTime = $request->start_time;
+            $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
+                ->where('tanggal_pulang', $startTime)
+                ->count();
+            $jmlIzin = DB::table('izins')
+                ->whereDate('mulai_izin', '<=', $startTime)
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->count();
+            $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+                ->where('tanggal_masuk', $startTime)
+                ->count();
+
+        } else {
+            $startTime = Carbon::now()->format('Y-m-d');
+
+            $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
+                ->where('tanggal_pulang', $startTime)
+                ->count();
+            $jmlIzin = Izin::whereDate('mulai_izin', '<=', $startTime)
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->count();
+            $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+                ->where('tanggal_masuk', $startTime)
+                ->count();
+        }
+
+        return response()->json([
+            'message' => 'jumlah kehadiran',
+            'data' => [
+                'jumlah_karyawan' => $jmlKaryawan,
+                'jumlah_kehadiran' => $jmlKehadiran,
+                'jumlah_izin' => $jmlIzin,
+                'jumlah_absen' => $jmlAbsen
+            ]
+        ]);
     }
 
     public function testKehadiran(Request $request)
@@ -321,16 +316,13 @@ class KehadiranController extends Controller
             $jmlKehadiran = Absensi::where('is_valid_pulang', '1')
                 ->whereBetween('tanggal_pulang', [$startTime, $endTime])
                 ->count();
+            // menetapkan range
             $jmlIzin = DB::table('izins')
-                ->whereDate('selesai_izin', '<=', $startTime)
-//                ->whereDate('mulai_izin', '<=', $startTime)
-                    ->orWhereBetween('mulai_izin', [$startTime, $endTime])
-                ->orWhereBetween('selesai_izin', [$startTime, $endTime])
-
-                ->orWhereDate('selesai_izin', '>=', $startTime)
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->whereDate('mulai_izin', '<=', $endTime)
                 ->count();
             $jmlAbsen = Absensi::where('is_valid_masuk', '0')
-                ->where('tanggal_masuk', $startTime)
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->count();
 
         } else if ($request->start_time) {
@@ -379,13 +371,10 @@ class KehadiranController extends Controller
             ], 404);
         }
 
-
         return response()->json([
             'status' => 200,
             'message' => "Detail Absen",
-            'data' => [
-                'absen' => new KehadiranResource($absen),
-            ]
+            'data' => $absen
         ]);
     }
 

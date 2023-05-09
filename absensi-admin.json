@@ -13,6 +13,10 @@
         {
             "url": "https://absensiguru.smkrus.com/api",
             "description": "Absensi RESTful API Server"
+        },
+        {
+            "url": "http://127.0.0.1:8000/api",
+            "description": "Absensi RESTful API Server (Local)"
         }
     ],
     "paths": {
@@ -299,6 +303,443 @@
                     }
                 }
             }
+        },
+        "/kehadiran": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kehadiran(Admin)"
+                ],
+                "summary": "List Kehadiran",
+                "description": "di endpoint ini ada 4 kondisi, yaitu saat parameter tidak ada, parameter time ada, parameter search ada, dan parameter time dan search ada. semua paramater tidak required",
+                "parameters": [
+                    {
+                        "name": "start_time",
+                        "in": "query",
+                        "description": "tanggal mulai untuk filter data",
+                        "required": false,
+                        "schema": {
+                            "type": "date"
+                        },
+                        "examples": {
+                            "tanggal": {
+                                "value": "2023-05-07"
+                            }
+                        }
+                    },
+                    {
+                        "name": "end_time",
+                        "in": "query",
+                        "description": "tanggal selesai untuk filter data",
+                        "required": false,
+                        "schema": {
+                            "type": "date"
+                        },
+                        "examples": {
+                            "tanggal": {
+                                "value": "2023-05-08"
+                            }
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search data dengan nama karyawan",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "search": {
+                                "value": "guru rpl"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/KehadiranSchema"
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "history kehadiran",
+                                            "data": {
+                                                "masuk": [
+                                                    {
+                                                        "id": 3,
+                                                        "user_id": 2,
+                                                        "keterangan": "masuk",
+                                                        "is_valid_masuk": 1,
+                                                        "catatan_masuk": "Atque rerum labore qui nisi.",
+                                                        "waktu_masuk": "12:31:40",
+                                                        "tanggal_masuk": "2023-05-08",
+                                                        "foto_masuk": "foto_masuk\/distinctio.png",
+                                                        "lokasi_masuk": "Weimanntown",
+                                                        "latitude_masuk": "8648822",
+                                                        "longitude_masuk": "7131516",
+                                                        "is_valid_pulang": 0,
+                                                        "catatan_pulang": null,
+                                                        "waktu_pulang": null,
+                                                        "tanggal_pulang": "2023-05-08",
+                                                        "foto_pulang": null,
+                                                        "lokasi_pulang": null,
+                                                        "latitude_pulang": null,
+                                                        "longitude_pulang": null,
+                                                        "user": {
+                                                            "id": 2,
+                                                            "niy": "00021324",
+                                                            "nama": "Staff",
+                                                            "email": "staff@gmail.com",
+                                                            "alamat": "Kudus",
+                                                            "no_hp": "081245673455",
+                                                            "pf_foto": null,
+                                                            "link_foto": "http:\/\/127.0.0.1:8000\/storage\/profile\/userdefault.png",
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 1,
+                                                                    "kategori": "expedita"
+                                                                },
+                                                                {
+                                                                    "id": 2,
+                                                                    "kategori": "debitis"
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": 7,
+                                                        "user_id": 2,
+                                                        "keterangan": "masuk",
+                                                        "is_valid_masuk": 0,
+                                                        "catatan_masuk": "Est quia autem sint sint maxime mollitia at.",
+                                                        "waktu_masuk": "07:10:56",
+                                                        "tanggal_masuk": "2023-05-08",
+                                                        "foto_masuk": "foto_masuk\/impedit.png",
+                                                        "lokasi_masuk": "East Jovan",
+                                                        "latitude_masuk": "5324596",
+                                                        "longitude_masuk": "8139690",
+                                                        "is_valid_pulang": null,
+                                                        "catatan_pulang": null,
+                                                        "waktu_pulang": null,
+                                                        "tanggal_pulang": null,
+                                                        "foto_pulang": null,
+                                                        "lokasi_pulang": null,
+                                                        "latitude_pulang": null,
+                                                        "longitude_pulang": null,
+                                                        "user": {
+                                                            "id": 2,
+                                                            "niy": "00021324",
+                                                            "nama": "Staff",
+                                                            "email": "staff@gmail.com",
+                                                            "alamat": "Kudus",
+                                                            "no_hp": "081245673455",
+                                                            "pf_foto": null,
+                                                            "link_foto": "http:\/\/127.0.0.1:8000\/storage\/profile\/userdefault.png",
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 1,
+                                                                    "kategori": "expedita"
+                                                                },
+                                                                {
+                                                                    "id": 2,
+                                                                    "kategori": "debitis"
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ],
+                                                "pulang": [
+                                                    {
+                                                        "id": 4,
+                                                        "user_id": 5,
+                                                        "keterangan": "pulang",
+                                                        "is_valid_masuk": 1,
+                                                        "catatan_masuk": "Et non modi quo placeat harum autem.",
+                                                        "waktu_masuk": "00:44:30",
+                                                        "tanggal_masuk": "2023-05-08",
+                                                        "foto_masuk": "foto_masuk\/voluptatum.png",
+                                                        "lokasi_masuk": "New Gia",
+                                                        "latitude_masuk": "3501482",
+                                                        "longitude_masuk": "7065934",
+                                                        "is_valid_pulang": 1,
+                                                        "catatan_pulang": null,
+                                                        "waktu_pulang": null,
+                                                        "tanggal_pulang": "2023-05-08",
+                                                        "foto_pulang": null,
+                                                        "lokasi_pulang": null,
+                                                        "latitude_pulang": null,
+                                                        "longitude_pulang": null,
+                                                        "user": {
+                                                            "id": 5,
+                                                            "niy": "03947382",
+                                                            "nama": "Guru DKV",
+                                                            "email": "dekape@gmail.com",
+                                                            "alamat": "Semarang",
+                                                            "no_hp": "082345675434",
+                                                            "pf_foto": null,
+                                                            "link_foto": "http:\/\/127.0.0.1:8000\/storage\/profile\/userdefault.png",
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 5,
+                                                                    "kategori": "dicta"
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ],
+                                                "izin": [
+                                                    {
+                                                        "id": 5,
+                                                        "user_id": 4,
+                                                        "jenis_izin": "izin",
+                                                        "mulai_izin": "2023-05-03",
+                                                        "selesai_izin": "2023-05-10",
+                                                        "deskripsi": "Saepe totam consectetur unde molestiae repellat ipsam libero. Hic ut omnis perspiciatis aliquid. Maxime molestias natus mollitia impedit.",
+                                                        "path_file": "path_file\/cupiditate.png",
+                                                        "user": {
+                                                            "id": 4,
+                                                            "niy": "38493812",
+                                                            "nama": "Guru RPL",
+                                                            "email": "erpeel@gmail.com",
+                                                            "alamat": "Semarang",
+                                                            "no_hp": "082466527865",
+                                                            "pf_foto": null,
+                                                            "link_foto": "http:\/\/127.0.0.1:8000\/storage\/profile\/userdefault.png",
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 4,
+                                                                    "kategori": "officia"
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": 7,
+                                                        "user_id": 4,
+                                                        "jenis_izin": "izin",
+                                                        "mulai_izin": "2023-05-03",
+                                                        "selesai_izin": "2023-05-15",
+                                                        "deskripsi": "Saepe totam consectetur unde molestiae repellat ipsam libero. Hic ut omnis perspiciatis aliquid. Maxime molestias natus mollitia impedit.",
+                                                        "path_file": "path_file\/cupiditate.png",
+                                                        "user": {
+                                                            "id": 4,
+                                                            "niy": "38493812",
+                                                            "nama": "Guru RPL",
+                                                            "email": "erpeel@gmail.com",
+                                                            "alamat": "Semarang",
+                                                            "no_hp": "082466527865",
+                                                            "pf_foto": null,
+                                                            "link_foto": "http:\/\/127.0.0.1:8000\/storage\/profile\/userdefault.png",
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 4,
+                                                                    "kategori": "officia"
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": 8,
+                                                        "user_id": 4,
+                                                        "jenis_izin": "izin",
+                                                        "mulai_izin": "2023-05-01",
+                                                        "selesai_izin": "2023-05-15",
+                                                        "deskripsi": "Saepe totam consectetur unde molestiae repellat ipsam libero. Hic ut omnis perspiciatis aliquid. Maxime molestias natus mollitia impedit.",
+                                                        "path_file": "path_file\/cupiditate.png",
+                                                        "user": {
+                                                            "id": 4,
+                                                            "niy": "38493812",
+                                                            "nama": "Guru RPL",
+                                                            "email": "erpeel@gmail.com",
+                                                            "alamat": "Semarang",
+                                                            "no_hp": "082466527865",
+                                                            "pf_foto": null,
+                                                            "link_foto": "http:\/\/127.0.0.1:8000\/storage\/profile\/userdefault.png",
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 4,
+                                                                    "kategori": "officia"
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kehadiran/jml-kehadiran": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kehadiran(Admin)"
+                ],
+                "summary": "Jumlah Kehadiran",
+                "description": "di endpoint ini ada 3 kondisi, yaitu saat parameter tidak ada, parameter start_time ada, dan parameter end_time ada, paramater start_time - end_time ada. semua paramater tidak required",
+                "parameters": [
+                    {
+                        "name": "start_time",
+                        "in": "query",
+                        "description": "tanggal mulai",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "tanggal": {
+                                "value": "2023-05-07"
+                            }
+                        }
+                    },
+                    {
+                        "name": "end_time",
+                        "in": "query",
+                        "description": "tanggal selesai",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "tanggal": {
+                                "value": "2023-05-08"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "jumlah kehadiran",
+                                            "data": {
+                                                "jumlah_karyawan": 5,
+                                                "jumlah_kehadiran": 3,
+                                                "jumlah_izin": 4,
+                                                "jumlah_absen": 3
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kehadiran/detail/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kehadiran(Admin)"
+                ],
+                "summary": "Jumlah Kehadiran",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id kehadiran",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 5
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "status": 200,
+                                            "message": "Detail Absen",
+                                            "data": {
+                                                "id": 5,
+                                                "user_id": 2,
+                                                "keterangan": "pulang",
+                                                "is_valid_masuk": 1,
+                                                "catatan_masuk": "Reiciendis voluptatem vel magnam mollitia numquam tenetur repellendus.",
+                                                "waktu_masuk": "22:29:02",
+                                                "tanggal_masuk": "2023-05-07",
+                                                "foto_masuk": "foto_masuk/rerum.png",
+                                                "lokasi_masuk": "East Shaunton",
+                                                "latitude_masuk": "5204876",
+                                                "longitude_masuk": "3164916",
+                                                "is_valid_pulang": 1,
+                                                "catatan_pulang": "Reiciendis voluptatem vel magnam mollitia numquam",
+                                                "waktu_pulang": "22:29:02",
+                                                "tanggal_pulang": "2023-05-07",
+                                                "foto_pulang": "foto_pulang/rerum.png",
+                                                "lokasi_pulang": "East Shaunton",
+                                                "latitude_pulang": "5204876",
+                                                "longitude_pulang": "3164916",
+                                                "user": {
+                                                    "id": 2,
+                                                    "niy": "00021324",
+                                                    "nama": "Staff",
+                                                    "email": "staff@gmail.com",
+                                                    "alamat": "Kudus",
+                                                    "no_hp": "081245673455",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                    "ktgkaryawan": [
+                                                        {
+                                                            "id": 1,
+                                                            "kategori": "expedita"
+                                                        },
+                                                        {
+                                                            "id": 2,
+                                                            "kategori": "debitis"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -377,6 +818,90 @@
                     }
                 }
             },
+            "KehadiranSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "masuk": {
+                                "$ref": "#/components/schemas/KehadiranMasukSchema"
+                            }
+                        }
+                    }
+                }
+            },
+            "AbsenSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "keterangan": {
+                        "type": "string"
+                    },
+                    "is_valid_masuk": {
+                        "type": "boolean",
+                        "format": "int",
+                        "description": "1 = valid, 0 = tidak valid"
+                    },
+                    "catatan_masuk": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "waktu_masuk": {
+                        "type": "time"
+                    },
+                    "tanggal_masuk": {
+                        "type": "date"
+                    },
+                    "foto_masuk": {
+                        "type": "file"
+                    },
+                    "lokasi_masuk": {
+                        "type": "string"
+                    },
+                    "latitude_masuk": {
+                        "type": "string"
+                    },
+                    "longitude_masuk": {
+                        "type": "string"
+                    },
+                    "is_valid_pulang": {
+                        "type": "boolean",
+                        "format": "int",
+                        "description": "1 = valid, 0 = tidak valid"
+                    },
+                    "catatan_pulang": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "waktu_pulang": {
+                        "type": "time"
+                    },
+                    "tanggal_pulang": {
+                        "type": "date"
+                    },
+                    "foto_pulang": {
+                        "type": "file"
+                    },
+                    "lokasi_pulang": {
+                        "type": "string"
+                    },
+                    "latitude_pulang": {
+                        "type": "string"
+                    },
+                    "longitude_pulang": {
+                        "type": "string"
+                    }
+                }
+            },
             "EventSchema": {
                 "type": "object",
                 "properties": {
@@ -406,6 +931,85 @@
                         "type": "string"
                     }
                 }
+            },
+            "UserSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "niy": {
+                        "type": "string"
+                    },
+                    "nama": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "alamat": {
+                        "type": "string"
+                    },
+                    "no_hp": {
+                        "type": "string"
+                    },
+                    "pf_foto": {
+                        "type": "string"
+                    },
+                    "link_foto": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserKategoriSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "niy": {
+                        "type": "string"
+                    },
+                    "nama": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "alamat": {
+                        "type": "string"
+                    },
+                    "no_hp": {
+                        "type": "string"
+                    },
+                    "pf_foto": {
+                        "type": "string"
+                    },
+                    "link_foto": {
+                        "type": "string"
+                    },
+                    "ktgkaryawan": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "kategori": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "KehadiranMasukSchema": {
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "description": "Absensi Auth",
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "Sanctum"
             }
         }
     }
