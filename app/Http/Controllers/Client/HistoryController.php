@@ -49,7 +49,7 @@ class HistoryController extends Controller
         return response()->json([
             'messege' => 'success',
             'data' => [
-                'absen' => new KehadiranResource($absensi),
+                'absen' => $absensi
             ]
         ], 200);
 
