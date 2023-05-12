@@ -96,13 +96,16 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadir
 
 // Route Admin Karyawan
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'karyawan'], function () {
+    Route::get('/kategori', [KaryawanController::class, 'getKategori']);
     Route::get('/', [KaryawanController::class, 'index']);
-    Route::post('/store-user', [KaryawanController::class, 'storeUser']);
+    Route::post('/store', [KaryawanController::class, 'store']);
 
-    Route::get('/edit/{id}', [KaryawanController::class, 'edit']);
-    Route::post('/update-user', [KaryawanController::class, 'updateUser']);
+    Route::get('/detail/{id}', [KaryawanController::class, 'show']);
+    Route::post('/update/{id}', [KaryawanController::class, 'update']);
 
-    Route::get('/delete-user/{id}', [KaryawanController::class, 'deleteUser']);
+    Route::get('/delete/{id}', [KaryawanController::class, 'delete']);
+    Route::post('/testjadwal', [KaryawanController::class, 'testUpdate']);
+    Route::post('/testkategori/{id}', [KaryawanController::class, 'testKategori']);
 });
 
 // Route Admin Event

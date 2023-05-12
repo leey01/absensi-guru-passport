@@ -740,6 +740,571 @@
                     }
                 }
             }
+        },
+        "/karyawan": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Karyawan(Admin)"
+                ],
+                "summary": "List Karyawan per Kategori",
+                "description": "user harus mengiputkan parameter kategori_id, untuk mendapatkan data karyawan per kategori. user juga bisa search karyawan dengan memberikan parameter search seperti di contoh, karyawan bisa dicari berdasarkan nama karyawan atau niy nya",
+                "parameters": [
+                    {
+                        "name": "kategori_id",
+                        "in": "query",
+                        "description": "id kategori",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 1
+                            }
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search karyawan",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "nama": {
+                                "description": "search karyawan berdasarkan nama",
+                                "value": "guru animasi"
+                            },
+                            "niy": {
+                                "description": "search karyawan berdasarkan niy",
+                                "value": "38493812"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 1,
+                                                    "niy": "01234567",
+                                                    "nama": "IT",
+                                                    "email": "it@gmail.com",
+                                                    "alamat": "Temanggung",
+                                                    "no_hp": "081234536675",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                    "ktgkaryawan": [
+                                                        {
+                                                            "id": 1,
+                                                            "kategori": "expedita"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "niy": "00021324",
+                                                    "nama": "Staff",
+                                                    "email": "staff@gmail.com",
+                                                    "alamat": "Kudus",
+                                                    "no_hp": "081245673455",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                    "ktgkaryawan": [
+                                                        {
+                                                            "id": 1,
+                                                            "kategori": "expedita"
+                                                        },
+                                                        {
+                                                            "id": 2,
+                                                            "kategori": "debitis"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/karyawan/kategori": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Karyawan(Admin)"
+                ],
+                "summary": "List Kategori Karyawan",
+                "description": "get all list kategori karyawan",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 1,
+                                                    "kategori": "expedita"
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "kategori": "debitis"
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "kategori": "ullam"
+                                                },
+                                                {
+                                                    "id": 4,
+                                                    "kategori": "officia"
+                                                },
+                                                {
+                                                    "id": 5,
+                                                    "kategori": "dicta"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/karyawan/detail/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Karyawan(Admin)"
+                ],
+                "summary": "Detail Karyawan",
+                "description": "Detail data karyawan dari profile, jadwal kehadiran dan kategori karyawan",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id karyawan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 2
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "user": {
+                                                "id": 2,
+                                                "niy": "00021324",
+                                                "nama": "Staff 1",
+                                                "email": "staff@gmail.com",
+                                                "alamat": "Bekasi",
+                                                "no_hp": "08213124312",
+                                                "pf_foto": "test",
+                                                "link_foto": "http://127.0.0.1:8000/test",
+                                                "ktgkaryawan": [
+                                                    {
+                                                        "id": 2,
+                                                        "kategori": "debitis"
+                                                    },
+                                                    {
+                                                        "id": 1,
+                                                        "kategori": "expedita"
+                                                    }
+                                                ],
+                                                "jadwal": [
+                                                    {
+                                                        "id": 10,
+                                                        "user_id": 2,
+                                                        "hari": "senin",
+                                                        "jam_masuk": "07:00:00",
+                                                        "jam_pulang": "01:00:00"
+                                                    },
+                                                    {
+                                                        "id": 8,
+                                                        "user_id": 2,
+                                                        "hari": "Jumat",
+                                                        "jam_masuk": "07:00:00",
+                                                        "jam_pulang": "15:00:00"
+                                                    },
+                                                    {
+                                                        "id": 6,
+                                                        "user_id": 2,
+                                                        "hari": "Sabtu",
+                                                        "jam_masuk": "07:00:00",
+                                                        "jam_pulang": "12:00:00"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/karyawan/store": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Karyawan(Admin)"
+                ],
+                "summary": "Store Karyawan",
+                "description": "create data karyawan dari profile, jadwal kehadiran dan kategori karyawan",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+
+                            },
+                            "examples": {
+                                "request": {
+                                    "value": {
+                                        "nama": "Contoh",
+                                        "niy": "09873849",
+                                        "email": "contoh@gmail.com",
+                                        "password": "smkrus",
+                                        "alamat": "Bekasi",
+                                        "no_hp": "08213124312",
+                                        "pf_foto": "",
+                                        "jadwal": [
+                                            {
+                                                "hari": "Senin",
+                                                "jam_masuk": "08:00:00",
+                                                "jam_pulang": "02:00:00"
+                                            },
+                                            {
+                                                "hari": "Selasa",
+                                                "jam_masuk": "09:00:00",
+                                                "jam_pulang": "12:00:00"
+                                            }
+                                        ],
+                                        "ktg_karyawan" : [2,1]
+                                    }
+                                }
+                            },
+                            "responses": {
+                                "200": {
+                                    "description": "success",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+
+                                            },
+                                            "examples": {
+                                                "200": {
+                                                    "value": {
+                                                        "message": "success",
+                                                        "data": {
+                                                            "id": 2,
+                                                            "niy": "00021324",
+                                                            "nama": "Staff 1",
+                                                            "email": "staff@gmail.com",
+                                                            "alamat": "Bekasi",
+                                                            "no_hp": "08213124312",
+                                                            "pf_foto": "test",
+                                                            "link_foto": "http://127.0.0.1:8000/test",
+                                                            "jadwal": [
+                                                                {
+                                                                    "id": 10,
+                                                                    "user_id": 2,
+                                                                    "hari": "senin",
+                                                                    "jam_masuk": "07:00:00",
+                                                                    "jam_pulang": "01:00:00"
+                                                                },
+                                                                {
+                                                                    "id": 8,
+                                                                    "user_id": 2,
+                                                                    "hari": "Jumat",
+                                                                    "jam_masuk": "07:00:00",
+                                                                    "jam_pulang": "15:00:00"
+                                                                },
+                                                                {
+                                                                    "id": 6,
+                                                                    "user_id": 2,
+                                                                    "hari": "Sabtu",
+                                                                    "jam_masuk": "07:00:00",
+                                                                    "jam_pulang": "12:00:00"
+                                                                }
+                                                            ],
+                                                            "ktgkaryawan": [
+                                                                {
+                                                                    "id": 2,
+                                                                    "kategori": "debitis"
+                                                                },
+                                                                {
+                                                                    "id": 1,
+                                                                    "kategori": "expedita"
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "nama": "Contoh",
+                                                "niy": "09873849",
+                                                "email": "contoh@gmail.com",
+                                                "password": "smkrus",
+                                                "alamat": "Bekasi",
+                                                "no_hp": "08213124312",
+                                                "pf_foto": "",
+                                                "jadwal": [
+                                                    {
+                                                        "hari": "Senin",
+                                                        "jam_masuk": "08:00:00",
+                                                        "jam_pulang": "02:00:00"
+                                                    },
+                                                    {
+                                                        "hari": "Selasa",
+                                                        "jam_masuk": "09:00:00",
+                                                        "jam_pulang": "12:00:00"
+                                                    }
+                                                ],
+                                                "ktg_karyawan": [
+                                                    2,
+                                                    1
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/karyawan/update/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Karyawan(Admin)"
+                ],
+                "summary": "Update Karyawan",
+                "description": "edit data karyawan dari profile, jadwal kehadiran dan kategori karyawan",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id karyawan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 2
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+
+                            },
+                            "examples": {
+                                "request": {
+                                    "value": {
+                                        "nama": "Staff",
+                                        "email": "staff@gmail.com",
+                                        "password": "smkrus",
+                                        "alamat": "Bekasi",
+                                        "no_hp": "08213124312",
+                                        "pf_foto": "",
+                                        "jadwal": [
+                                            {
+                                                "hari": "Senin",
+                                                "jam_masuk": "08:00:00",
+                                                "jam_pulang": "02:00:00"
+                                            },
+                                            {
+                                                "hari": "Selasa",
+                                                "jam_masuk": "09:00:00",
+                                                "jam_pulang": "12:00:00"
+                                            }
+                                        ],
+                                        "ktg_karyawan" : [
+                                            2,1
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "nama": "Staff",
+                                                "email": "staff@gmail.com",
+                                                "password": "smkrus",
+                                                "alamat": "Bekasi",
+                                                "no_hp": "08213124312",
+                                                "pf_foto": "",
+                                                "jadwal": [
+                                                    {
+                                                        "hari": "Senin",
+                                                        "jam_masuk": "08:00:00",
+                                                        "jam_pulang": "02:00:00"
+                                                    },
+                                                    {
+                                                        "hari": "Selasa",
+                                                        "jam_masuk": "09:00:00",
+                                                        "jam_pulang": "12:00:00"
+                                                    }
+                                                ],
+                                                "ktg_karyawan" : [
+                                                    2,1
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/karyawan/delete/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Karyawan(Admin)"
+                ],
+                "summary": "Delete Karyawan",
+                "description": "delete data karyawan dari profile, jadwal kehadiran dan kategori karyawan",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id karyawan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 7
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

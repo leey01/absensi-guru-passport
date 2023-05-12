@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Event::class, 'pesertas', 'user_id', 'event_id');
     }
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'user_id', 'id')->orderByRaw('FIELD(jadwals.hari, "senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu")');
+    }
 }
