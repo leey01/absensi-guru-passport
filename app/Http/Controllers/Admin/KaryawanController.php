@@ -164,6 +164,9 @@ class KaryawanController extends Controller
 
         // create jadwal
         $data = $request->input('jadwal');
+        if (empty($data)){
+            $data = [];
+        }
         foreach ($data as $item) {
             Jadwal::create([
                 'user_id' => $user->id,
@@ -176,6 +179,9 @@ class KaryawanController extends Controller
 
         // create kategori
         $req = $request->input('ktg_karyawan');
+        if (empty($req)){
+            $req = [];
+        }
         foreach ($req as $item) {
             DB::table('kategori_karyawan_users')->insert([
                 'user_id' => $user->id,
@@ -370,8 +376,12 @@ class KaryawanController extends Controller
         ]);
 
         // update jadwal
-        Jadwal::where('user_id', $id)->delete();
         $data = $request->input('jadwal');
+        if (empty($data)) {
+            $data = [];
+        } else {
+            Jadwal::where('user_id', $id)->delete();
+        }
         foreach ($data as $item) {
             Jadwal::create([
                 'user_id' => $id,
@@ -383,9 +393,13 @@ class KaryawanController extends Controller
 
         // update kategori
         $req = $request->input('ktg_karyawan');
-        DB::table('kategori_karyawan_users')
-            ->where('user_id', $id)
-            ->delete();
+        if (empty($req)) {
+            $req = [];
+        } else {
+            DB::table('kategori_karyawan_users')
+                ->where('user_id', $id)
+                ->delete();
+        }
 
         foreach ($req as $item) {
             DB::table('kategori_karyawan_users')->insert([

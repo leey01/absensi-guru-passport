@@ -113,6 +113,9 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kalende
     Route::get('/', [\App\Http\Controllers\Admin\KalenderController::class, 'index']);
     Route::post('/create', [\App\Http\Controllers\Admin\KalenderController::class, 'store']);
     Route::get('/destroy/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'destroy']);
-    Route::get('/update/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'update']);
-    Route::post('/edit', [\App\Http\Controllers\Admin\KalenderController::class, 'edit']);
+    Route::post('/update/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'update']);
+    Route::get('/detail/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'show']);
+
+    Route::get('/get-kategori', [\App\Http\Controllers\Admin\KalenderController::class, 'getKategori']);
+    Route::get('/get-karyawan', [\App\Http\Controllers\Admin\KalenderController::class, 'getKaryawan']);
 });

@@ -1305,6 +1305,648 @@
                     }
                 }
             }
+        },
+        "/kalender": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "Page Kalender",
+                "description": "get data event dengan parameter bulan",
+                "parameters": [
+                    {
+                        "name": "bulan",
+                        "in": "query",
+                        "description": "bulan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "bulan": {
+                                "value": 5
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "messege": "success",
+                                            "data": [
+                                                {
+                                                    "id": 1,
+                                                    "judul": "vitae aut molestiae",
+                                                    "kategori_event": "libur",
+                                                    "lokasi": "East Alizebury",
+                                                    "waktu_mulai": "2023-05-06 10:32:39",
+                                                    "waktu_selesai": "0000-00-00 00:00:00",
+                                                    "deskripsi": "Voluptatem veniam et id dolores maxime accusantium expedita. Quasi ut voluptatem et omnis nihil. Nam a distinctio a nulla animi. Sequi hic soluta aut debitis blanditiis voluptatem."
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "judul": "excepturi eius et",
+                                                    "kategori_event": "event",
+                                                    "lokasi": "Gunnerland",
+                                                    "waktu_mulai": "2023-05-06 07:23:11",
+                                                    "waktu_selesai": "0000-00-00 00:00:00",
+                                                    "deskripsi": "Atque quia sit minus. Autem deserunt reiciendis et voluptatem."
+                                                },
+                                                {
+                                                    "id": 6,
+                                                    "judul": "Class Meeting",
+                                                    "kategori_event": "event",
+                                                    "lokasi": "",
+                                                    "waktu_mulai": "2023-05-13 00:00:00",
+                                                    "waktu_selesai": "2023-05-17 00:00:00",
+                                                    "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis"
+                                                },
+                                                {
+                                                    "id": 7,
+                                                    "judul": "Class Meeting",
+                                                    "kategori_event": "event",
+                                                    "lokasi": "",
+                                                    "waktu_mulai": "2023-05-13 00:00:00",
+                                                    "waktu_selesai": "2023-05-17 00:00:00",
+                                                    "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis"
+                                                },
+                                                {
+                                                    "id": 8,
+                                                    "judul": "Class Meeting Rus",
+                                                    "kategori_event": "event",
+                                                    "lokasi": "",
+                                                    "waktu_mulai": "2023-05-13 00:00:00",
+                                                    "waktu_selesai": "2023-05-17 00:00:00",
+                                                    "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kalender/detail/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "Detail Event",
+                "description": "get detail data event",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 1
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "id": 10,
+                                                "judul": "Class Meeting",
+                                                "kategori_event": "event",
+                                                "lokasi": "",
+                                                "waktu_mulai": "2023-05-13 00:00:00",
+                                                "waktu_selesai": "2023-05-17 00:00:00",
+                                                "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis",
+                                                "peserta": [
+                                                    {
+                                                        "id": 1,
+                                                        "niy": "01234567",
+                                                        "nama": "IT",
+                                                        "email": "it@gmail.com",
+                                                        "alamat": "Temanggung",
+                                                        "no_hp": "081234536675",
+                                                        "pf_foto": null,
+                                                        "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                        "ktgkaryawan": [
+                                                            {
+                                                                "id": 1,
+                                                                "kategori": "expedita"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "niy": "00021324",
+                                                        "nama": "Staff",
+                                                        "email": "staff@gmail.com",
+                                                        "alamat": "Bekasi",
+                                                        "no_hp": "08213124312",
+                                                        "pf_foto": "test",
+                                                        "link_foto": "http://127.0.0.1:8000/test",
+                                                        "ktgkaryawan": []
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kalender/create": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "Create Event",
+                "description": "create data event dan peserta",
+                "requestBody": {
+                    "description": "untuk parameter peserta, isi dengan id karyawan yang akan dijadikan peserta",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+
+                            },
+                            "examples": {
+                                "example1": {
+                                    "value": {
+                                        "judul": "Class Meeting",
+                                        "kategori_event": "event",
+                                        "waktu_mulai": "2023-05-13",
+                                        "waktu_selesai": "2023-05-17",
+                                        "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis",
+                                        "peserta": [1,2]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "id": 10,
+                                                "judul": "Class Meeting",
+                                                "kategori_event": "event",
+                                                "lokasi": "",
+                                                "waktu_mulai": "2023-05-13 00:00:00",
+                                                "waktu_selesai": "2023-05-17 00:00:00",
+                                                "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis",
+                                                "peserta": [
+                                                    {
+                                                        "id": 1,
+                                                        "niy": "01234567",
+                                                        "nama": "IT",
+                                                        "email": "it@gmail.com",
+                                                        "alamat": "Temanggung",
+                                                        "no_hp": "081234536675",
+                                                        "pf_foto": null,
+                                                        "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                        "ktgkaryawan": [
+                                                            {
+                                                                "id": 1,
+                                                                "kategori": "expedita"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "niy": "00021324",
+                                                        "nama": "Staff",
+                                                        "email": "staff@gmail.com",
+                                                        "alamat": "Bekasi",
+                                                        "no_hp": "08213124312",
+                                                        "pf_foto": "test",
+                                                        "link_foto": "http://127.0.0.1:8000/test",
+                                                        "ktgkaryawan": []
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kalender/kategori": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "List Kategori Karyawan",
+                "description": "get all list kategori karyawan",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 1,
+                                                    "kategori": "expedita"
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "kategori": "debitis"
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "kategori": "ullam"
+                                                },
+                                                {
+                                                    "id": 4,
+                                                    "kategori": "officia"
+                                                },
+                                                {
+                                                    "id": 5,
+                                                    "kategori": "dicta"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kalender/get-karyawan": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "List Karyawan per Kategori",
+                "description": "user harus mengiputkan parameter kategori_id, untuk mendapatkan data karyawan per kategori. user juga bisa search karyawan dengan memberikan parameter search seperti di contoh, karyawan bisa dicari berdasarkan nama karyawan atau niy nya, endpoint ini digunakan saat ingin menginput peserta saat create event",
+                "parameters": [
+                    {
+                        "name": "kategori_id",
+                        "in": "query",
+                        "description": "id kategori",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "id": {
+                                "value": 1
+                            }
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search karyawan",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "nama": {
+                                "description": "search karyawan berdasarkan nama",
+                                "value": "guru animasi"
+                            },
+                            "niy": {
+                                "description": "search karyawan berdasarkan niy",
+                                "value": "38493812"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 1,
+                                                    "niy": "01234567",
+                                                    "nama": "IT",
+                                                    "email": "it@gmail.com",
+                                                    "alamat": "Temanggung",
+                                                    "no_hp": "081234536675",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                    "ktgkaryawan": [
+                                                        {
+                                                            "id": 1,
+                                                            "kategori": "expedita"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "niy": "00021324",
+                                                    "nama": "Staff",
+                                                    "email": "staff@gmail.com",
+                                                    "alamat": "Kudus",
+                                                    "no_hp": "081245673455",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                    "ktgkaryawan": [
+                                                        {
+                                                            "id": 1,
+                                                            "kategori": "expedita"
+                                                        },
+                                                        {
+                                                            "id": 2,
+                                                            "kategori": "debitis"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kalender/update/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "Update Event",
+                "description": "update data event dan peserta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "example1": {
+                                "value": 8
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "untuk parameter peserta, isi dengan id karyawan yang akan dijadikan peserta",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+
+                            },
+                            "examples": {
+                                "example1": {
+                                    "value": {
+                                        "judul": "Class Meeting",
+                                        "kategori_event": "event",
+                                        "waktu_mulai": "2023-05-13",
+                                        "waktu_selesai": "2023-05-17",
+                                        "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis",
+                                        "peserta": [1,2]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "id": 8,
+                                                "judul": "Class Meeting Rus",
+                                                "kategori_event": "event",
+                                                "lokasi": "",
+                                                "waktu_mulai": "2023-05-13 00:00:00",
+                                                "waktu_selesai": "2023-05-17 00:00:00",
+                                                "deskripsi": "Acara perkumpulan setiap kelas dari semua angkatan untuk memenangkan lomba2 yang disediakan osis",
+                                                "peserta": [
+                                                    {
+                                                        "id": 1,
+                                                        "niy": "01234567",
+                                                        "nama": "IT",
+                                                        "email": "it@gmail.com",
+                                                        "alamat": "Temanggung",
+                                                        "no_hp": "081234536675",
+                                                        "pf_foto": null,
+                                                        "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                        "ktgkaryawan": [
+                                                            {
+                                                                "id": 1,
+                                                                "kategori": "expedita"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "niy": "00021324",
+                                                        "nama": "Staff",
+                                                        "email": "staff@gmail.com",
+                                                        "alamat": "Bekasi",
+                                                        "no_hp": "08213124312",
+                                                        "pf_foto": "test",
+                                                        "link_foto": "http://127.0.0.1:8000/test",
+                                                        "ktgkaryawan": [
+                                                            {
+                                                                "id": 2,
+                                                                "kategori": "debitis"
+                                                            },
+                                                            {
+                                                                "id": 1,
+                                                                "kategori": "expedita"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "id": 3,
+                                                        "niy": "89282132",
+                                                        "nama": "Guru Animasi",
+                                                        "email": "anim@gmail.com",
+                                                        "alamat": "Semarang",
+                                                        "no_hp": "082466527865",
+                                                        "pf_foto": null,
+                                                        "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                        "ktgkaryawan": []
+                                                    },
+                                                    {
+                                                        "id": 4,
+                                                        "niy": "38493812",
+                                                        "nama": "Guru RPL",
+                                                        "email": "erpeel@gmail.com",
+                                                        "alamat": "Semarang",
+                                                        "no_hp": "082466527865",
+                                                        "pf_foto": null,
+                                                        "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                        "ktgkaryawan": [
+                                                            {
+                                                                "id": 4,
+                                                                "kategori": "officia"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "id": 5,
+                                                        "niy": "03947382",
+                                                        "nama": "Guru DKV",
+                                                        "email": "dekape@gmail.com",
+                                                        "alamat": "Semarang",
+                                                        "no_hp": "082345675434",
+                                                        "pf_foto": null,
+                                                        "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png",
+                                                        "ktgkaryawan": [
+                                                            {
+                                                                "id": 5,
+                                                                "kategori": "dicta"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kalender/destroy/{id}": {
+            "get": {
+                "tags": [
+                    "Kalender(Admin)"
+                ],
+                "summary": "Delete Event",
+                "description": "delete data event dan peserta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "example1": {
+                                "value": 9
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
