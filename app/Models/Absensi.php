@@ -18,7 +18,7 @@ class Absensi extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->hasOne(User::class, 'id', 'user_id')->with('ktgkaryawan');
     }
 
     public function getLinkFotoMasukAttribute()

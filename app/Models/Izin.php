@@ -22,4 +22,9 @@ class Izin extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id')->with('ktgkaryawan');
+    }
 }

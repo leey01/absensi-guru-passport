@@ -87,20 +87,25 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'dashboa
 // Route Admin Kehadiran
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadiran'], function () {
     Route::get('/', [KehadiranController::class, 'kehadiran']);
+    Route::get('/jml-kehadiran', [KehadiranController::class, 'jmlKehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
     Route::get('/kehadiran-terbaru', [KehadiranController::class, 'kehadiranTerbaru']);
     Route::post('/search', [KehadiranController::class, 'search']);
+    Route::get('/test', [KehadiranController::class, 'testKehadiran']);
 });
 
 // Route Admin Karyawan
 Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'karyawan'], function () {
+    Route::get('/kategori', [KaryawanController::class, 'getKategori']);
     Route::get('/', [KaryawanController::class, 'index']);
-    Route::post('/store-user', [KaryawanController::class, 'storeUser']);
+    Route::post('/store', [KaryawanController::class, 'store']);
 
-    Route::get('/edit/{id}', [KaryawanController::class, 'edit']);
-    Route::post('/update-user', [KaryawanController::class, 'updateUser']);
+    Route::get('/detail/{id}', [KaryawanController::class, 'show']);
+    Route::post('/update/{id}', [KaryawanController::class, 'update']);
 
-    Route::get('/delete-user/{id}', [KaryawanController::class, 'deleteUser']);
+    Route::get('/delete/{id}', [KaryawanController::class, 'delete']);
+    Route::post('/testjadwal', [KaryawanController::class, 'testUpdate']);
+    Route::post('/testkategori/{id}', [KaryawanController::class, 'testKategori']);
 });
 
 // Route Admin Event
@@ -108,6 +113,9 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kalende
     Route::get('/', [\App\Http\Controllers\Admin\KalenderController::class, 'index']);
     Route::post('/create', [\App\Http\Controllers\Admin\KalenderController::class, 'store']);
     Route::get('/destroy/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'destroy']);
-    Route::get('/update/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'update']);
-    Route::post('/edit', [\App\Http\Controllers\Admin\KalenderController::class, 'edit']);
+    Route::post('/update/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'update']);
+    Route::get('/detail/{id}', [\App\Http\Controllers\Admin\KalenderController::class, 'show']);
+
+    Route::get('/get-kategori', [\App\Http\Controllers\Admin\KalenderController::class, 'getKategori']);
+    Route::get('/get-karyawan', [\App\Http\Controllers\Admin\KalenderController::class, 'getKaryawan']);
 });
