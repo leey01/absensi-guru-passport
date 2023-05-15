@@ -33,8 +33,10 @@ class KalenderController extends Controller
 
         try {
             $events = User::where('id', auth()->user()->id)
-                ->whereMonth('waktu_mulai', $request->bulan)
                 ->with('event')
+                ->whereHas('event', function ($query) use ($request) {
+                    $query->whereMonth('waktu_mulai', $request->bulan);
+                })
                 ->first();
 
         } catch (QueryException $e) {
