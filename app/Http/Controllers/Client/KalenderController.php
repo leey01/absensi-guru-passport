@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Client;
 use App\Events\NotifEvent;
 use App\Jobs\NotifEventJob;
 use App\Models\Event;
-use App\Models\Peserta;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -14,14 +13,27 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 
 class KalenderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $validator = Validator::make(request()->all(), [
+            'bulan' => 'required',
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
         try {
             $events = User::where('id', auth()->user()->id)
+                ->whereMonth('waktu_mulai', $request->bulan)
                 ->with('event')
                 ->first();
 
