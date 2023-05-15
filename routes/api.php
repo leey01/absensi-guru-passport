@@ -32,7 +32,7 @@ Route::get('/', function () {
 })->name('login');
 
 Route::get('/testnotif', [KalenderController::class, 'notifEventToday']);
-
+Route::get('/test-time', [\App\Http\Controllers\TestController::class, 'testTimeNow']);
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
