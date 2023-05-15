@@ -415,4 +415,21 @@ class KehadiranController extends Controller
             'data' => $absen
         ]);
     }
+
+    public function detailIzin($id)
+    {
+        $izin = Izin::with(['user'])
+            ->find($id);
+
+        if (is_null($izin)){
+            return response()->json([
+                'message' => "Data Izin tidak ditemukan!"
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => "success",
+            'data' => $izin
+        ]);
+    }
 }

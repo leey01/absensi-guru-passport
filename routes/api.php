@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kehadir
     Route::get('/', [KehadiranController::class, 'kehadiran']);
     Route::get('/jml-kehadiran', [KehadiranController::class, 'jmlKehadiran']);
     Route::get('/detail/{id}', [KehadiranController::class, 'detailAbsen']);
+    Route::get('/detail-izin/{id}', [KehadiranController::class, 'detailIzin']);
     Route::get('/kehadiran-terbaru', [KehadiranController::class, 'kehadiranTerbaru']);
     Route::post('/search', [KehadiranController::class, 'search']);
     Route::get('/test', [KehadiranController::class, 'testKehadiran']);
