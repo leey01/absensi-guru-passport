@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
@@ -31,8 +32,8 @@ Route::get('/', function () {
     ], 401);
 })->name('login');
 
-Route::get('/testnotif', [KalenderController::class, 'notifEventToday']);
-Route::get('/test-time', [\App\Http\Controllers\TestController::class, 'testTimeNow']);
+Route::get('/testnotif', [TestController::class, 'testNotifEvent']);
+Route::get('/test-time', [TestController::class, 'testTimeNow']);
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 

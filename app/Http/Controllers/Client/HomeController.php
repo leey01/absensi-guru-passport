@@ -39,14 +39,37 @@ class HomeController extends Controller
         $fotoPath = 'foto_masuk/'. $fotoName;
         Storage::disk('public')->put($fotoPath, file_get_contents($request->foto_masuk));
 
+        // variabel waktu dan jadwal
+        $hari = Carbon::now()->format('Y-m-d');
+        $hari = Carbon::parse($hari)->locale('id');
+        $hari->settings(['formatFunction' => 'translatedFormat']);
+
+        $jadwal = Jadwal::where('user_id', Auth::user()->id)
+            ->where('hari', $hari->format('l'))
+            ->first();
+
+        // validasi waktu masuk
+        if ($jadwal) {
+            if (Carbon::now()->format('H:i:s') < $jadwal->jam_masuk){
+                $isValid = true;
+            } else {
+                $isValid = false;
+            }
+        } else {
+            return response()->json([
+                'message' => 'jadwal tidak ditemukan, tidak perlu absen'
+            ], 404);
+        }
+
         try {
             $absen = Absensi::create([
                 'user_id' => Auth::user()->id,
                 'keterangan' => 'masuk',
                 'is_valid_masuk' => $request->is_valid_masuk,
+                'isvld_wkt_masuk' => $isValid,
                 'catatan_masuk' => $request->catatan_masuk,
-                'waktu_masuk' => $request->waktu_masuk,
-                'tanggal_masuk' => $request->tanggal_masuk,
+                'waktu_masuk' => Carbon::now()->format('H:i:s'),
+                'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
                 'foto_masuk' => $fotoPath,
                 'lokasi_masuk' => $request->lokasi_masuk,
                 'longitude_masuk' => $request->longitude_masuk,
@@ -90,6 +113,28 @@ class HomeController extends Controller
         Storage::disk('public')->put($fotoPath, file_get_contents($request->foto_pulang));
         $url = Storage::disk('public')->url($fotoPath);
 
+        // variabel waktu dan jadwal
+        $hari = Carbon::now()->format('Y-m-d');
+        $hari = Carbon::parse($hari)->locale('id');
+        $hari->settings(['formatFunction' => 'translatedFormat']);
+
+        $jadwal = Jadwal::where('user_id', Auth::user()->id)
+            ->where('hari', $hari->format('l'))
+            ->first();
+
+        // validasi waktu masuk
+        if ($jadwal) {
+            if (Carbon::now()->format('H:i:s') > $jadwal->jam_pulang){
+                $isValid = true;
+            } else {
+                $isValid = false;
+            }
+        } else {
+            return response()->json([
+                'message' => 'jadwal tidak ditemukan, tidak perlu absen'
+            ], 404);
+        }
+
         try {
             $absen = Absensi::where('user_id', Auth::user()->id)
                 ->where('keterangan', 'masuk')
@@ -98,9 +143,10 @@ class HomeController extends Controller
             $absen->update([
                 'keterangan' => 'pulang',
                 'is_valid_pulang' => $request->is_valid_pulang,
+                'isvld_wkt_pulang' => $isValid,
                 'catatan_pulang' => $request->catatan_pulang,
-                'waktu_pulang' => $request->waktu_pulang,
-                'tanggal_pulang' => $request->tanggal_pulang,
+                'waktu_pulang' => Carbon::now()->format('H:i:s'),
+                'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
                 'foto_pulang' => $fotoPath,
                 'lokasi_pulang' => $request->lokasi_pulang,
                 'longitude_pulang' => $request->longitude_pulang,
@@ -114,8 +160,10 @@ class HomeController extends Controller
             ], 401);
         }
 
+        $absen = Absensi::find($id);
         return response()->json([
             'message' => 'absen pulang berhasil',
+            'data' => $absen
         ]);
     }
 
@@ -175,6 +223,7 @@ class HomeController extends Controller
             ->first();
         // waktu masuk
         $dataAbsenMasuk ? $waktuMasuk = $dataAbsenMasuk->waktu_masuk : $waktuMasuk = '';
+        $dataAbsenMasuk ? $tanggalMasuk = $dataAbsenMasuk->tanggal_masuk : $tanggalMasuk = '';
         // status masuk
         $dataAbsenMasuk ? $statusMasuk = true : $statusMasuk = false;
 
@@ -185,6 +234,7 @@ class HomeController extends Controller
             ->first();
         // waktu pulang
         $dataAbsenPulang ? $waktuPulang = $dataAbsenPulang->waktu_pulang : $waktuPulang = '';
+        $dataAbsenPulang ? $tanggalPulang = $dataAbsenPulang->tanggal_pulang : $tanggalPulang = '';
         // status pulang
         $dataAbsenPulang ? $statusPulang = true : $statusPulang = false;
 
@@ -202,16 +252,16 @@ class HomeController extends Controller
                 'id_absen' => $dataAbsenMasuk->id ?? 0
             ],
             'jadwal_absen' => [
-                'masuk' => $jadwalMasuk,
-                'pulang' => $jadwalPulang,
+                'masuk' => Carbon::parse($jadwalMasuk)->format('H.i'),
+                'pulang' => Carbon::parse($jadwalPulang)->format('H.i'),
             ],
             'status_absen' => [
                 'masuk' => $statusMasuk,
                 'pulang' => $statusPulang,
             ],
             'waktu_absen' => [
-                'masuk' => $waktuMasuk ? $waktuMasuk : '',
-                'pulang' => $waktuPulang ? $waktuPulang : '',
+                'masuk' =>  "$tanggalMasuk $waktuMasuk" ?? '',
+                'pulang' => "$tanggalPulang $waktuPulang" ?? '',
             ]
         ]);
     }

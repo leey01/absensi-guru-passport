@@ -12,7 +12,7 @@ class Absensi extends Model
 
     protected $appends = ['link_foto_masuk', 'link_foto_pulang'];
 
-    protected $fillable = ['user_id', 'keterangan', 'waktu_masuk', 'tanggal_masuk', 'catatan_masuk', 'foto_masuk', 'lokasi_masuk', 'longitude_masuk', 'latitude_masuk', 'is_valid_masuk', 'is_valid_pulang'];
+    protected $fillable = ['user_id', 'keterangan', 'waktu_masuk', 'tanggal_masuk', 'catatan_masuk', 'foto_masuk', 'lokasi_masuk', 'longitude_masuk', 'latitude_masuk', 'is_valid_masuk', 'isvld_wkt_masuk', 'is_valid_pulang'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
