@@ -6,6 +6,7 @@ use App\Exports\AbsensiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Event;
+use App\Models\Izin;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,40 +15,32 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
-    public function dashboard(Request $request)
+    public function dashboard()
     {
-        $tanggal = $request->tanggal ?? Carbon::now()->format('Y-m-d');
+        $tanggal = Carbon::now()->format('Y-m-d');
 
         // Karyawan
         $jmlKaryawan = User::all()
             ->count();
 
         // Jumlah masuk today
-        $jmlMasuk = DB::table('absensis')
-            ->where('keterangan', 'masuk')
-            ->whereDate('created_at', $tanggal)
+        $jmlMasuk = Absensi::where('keterangan', 'masuk')
+            ->whereDate('tanggal_masuk', $tanggal)
             ->count();
-        // Jumlah pulang today
-        $jmlPulang = DB::table('absensis')
-            ->where('keterangan', 'pulang')
-            ->whereDate('created_at', $tanggal)
-            ->count();
-        $jmlAbsen = $jmlKaryawan - ($jmlMasuk + $jmlPulang);
-
-        $jmlIzin = DB::table('izins')
-            ->whereDate('mulai_izin', '<=', $tanggal)
+        $jmlIzin = Izin::whereDate('mulai_izin', '<=', $tanggal)
             ->whereDate('selesai_izin', '>=', $tanggal)
+            ->count();
+        $jmlAbsen = Absensi::where('is_valid_masuk', '0')
+            ->where('tanggal_masuk', $tanggal)
             ->count();
 
         $response = response()->json([
             'message' => 'success',
             'data' => [
-                'jml_kehadiran' => [
-                    'jml_karyawan' => $jmlKaryawan,
-                    'jml_masuk' => $jmlMasuk,
-                    'jml_izin' => $jmlIzin,
-                    'jml_absen' => $jmlAbsen
-                ]
+                'jumlah_karyawan' => $jmlKaryawan,
+                'jumlah_masuk' => $jmlMasuk,
+                'jumlah_izin' => $jmlIzin,
+                'jumlah_absen' => $jmlAbsen
             ]
         ]);
 
