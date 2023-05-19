@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Events\IzinEvent;
+use App\Events\JmlKehadiranEvent;
+use App\Events\KehadiranEvent;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Izin;
@@ -11,6 +15,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -83,9 +88,16 @@ class HomeController extends Controller
             ], 401);
         }
 
+        $dashboard = new DashboardController();
+        $jmlKehadiran = $dashboard->dashboard();
+        $jmlKehadiran = $jmlKehadiran->original;
+        $jmlKehadiran = $jmlKehadiran['data'];
+        event(new JmlKehadiranEvent($jmlKehadiran));
+        event(new KehadiranEvent($absen->id));
+
         return response()->json([
             'message' => 'absen masuk berhasil',
-            'data' => $absen
+            'data' => $absen,
         ]);
     }
 
@@ -160,6 +172,13 @@ class HomeController extends Controller
             ], 401);
         }
 
+        $dashboard = new DashboardController();
+        $jmlKehadiran = $dashboard->dashboard();
+        $jmlKehadiran = $jmlKehadiran->original;
+        $jmlKehadiran = $jmlKehadiran['data'];
+        event(new JmlKehadiranEvent($jmlKehadiran));
+        event(new KehadiranEvent($id));
+
         $absen = Absensi::find($id);
         return response()->json([
             'message' => 'absen pulang berhasil',
@@ -203,6 +222,8 @@ class HomeController extends Controller
                 'data' => $e
             ], 503);
         }
+
+        event(new IzinEvent($izin->id));
 
         return response()->json([
             'message' => 'izin berhasil',
