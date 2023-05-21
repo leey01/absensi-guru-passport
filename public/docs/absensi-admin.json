@@ -1947,6 +1947,475 @@
                     }
                 }
             }
+        },
+        "/setting/kategori": {
+            "get": {
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Get all Kategori",
+                "description": "get data kategori degan jumlah karyawan dengan kategori masing - masing",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 1,
+                                                    "kategori": "expedita",
+                                                    "jumlah": 2
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "kategori": "debitis",
+                                                    "jumlah": 1
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "kategori": "dolorem",
+                                                    "jumlah": 0
+                                                },
+                                                {
+                                                    "id": 4,
+                                                    "kategori": "officia",
+                                                    "jumlah": 1
+                                                },
+                                                {
+                                                    "id": 5,
+                                                    "kategori": "dicta",
+                                                    "jumlah": 1
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kategori/store": {
+            "post": {
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Add Kategori",
+                "description": "add data kategori",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nama_kategori": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "example1": {
+                                    "value": {
+                                        "nama_kategori": "Guru Tetap"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "kategori": "Guru Tetap",
+                                                "id": 7
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kategori/update/{id}": {
+            "post": {
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Update Kategori",
+                "description": "update data kategori",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id kategori",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "example1": {
+                                "value": 7
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nama_kategori": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "example1": {
+                                    "value": {
+                                        "nama_kategori": "Guru Tetap"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "kategori": "Guru Tetap",
+                                                "id": 7
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kategori/delete/{id}": {
+            "get": {
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Delete Kategori",
+                "description": "delete data kategori",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id kategori",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "example1": {
+                                "value": 7
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kategori/get-karyawan": {
+            "get": {
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Get all Karyawan",
+                "description": "get data karyawan untuk assign kategori",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search karyawan dengan nama dan niy, parameter ini opsional jika tidak diisi maka akan return semua data karyawan",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "example1": {
+                                "value": "Guru"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "id": 3,
+                                                    "niy": "89282132",
+                                                    "nama": "Guru Animasi",
+                                                    "email": "anim@gmail.com",
+                                                    "alamat": "Semarang",
+                                                    "no_hp": "082466527865",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png"
+                                                },
+                                                {
+                                                    "id": 4,
+                                                    "niy": "38493812",
+                                                    "nama": "Guru RPL",
+                                                    "email": "erpeel@gmail.com",
+                                                    "alamat": "Semarang",
+                                                    "no_hp": "082466527865",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png"
+                                                },
+                                                {
+                                                    "id": 5,
+                                                    "niy": "03947382",
+                                                    "nama": "Guru DKV",
+                                                    "email": "dekape@gmail.com",
+                                                    "alamat": "Semarang",
+                                                    "no_hp": "082345675434",
+                                                    "pf_foto": null,
+                                                    "link_foto": "http://127.0.0.1:8000/storage/profile/userdefault.png"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kategori/assign": {
+            "post": {
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Assign Kategori",
+                "description": "assign kategori ke karyawan, bisa assign lebih dari satu karyawan",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer"
+                                    },
+                                    "karyawan_id": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "example1": {
+                                    "value": {
+                                        "kategori_id": 7,
+                                        "karyawan_id": [
+                                            3,
+                                            4,
+                                            5
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kordinat": {
+            "get": {
+                "tags": [
+                    "Setting - Kordinat"
+                ],
+                "summary": "Get Kordinat",
+                "description": "get data kordinat",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "key": "latitude",
+                                                    "value": "-7.175392"
+                                                },
+                                                {
+                                                    "key": "longitude",
+                                                    "value": "107.827153"
+                                                },
+                                                {
+                                                    "key": "radius",
+                                                    "value": "20"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/kordinat/update": {
+            "post": {
+                "tags": [
+                    "Setting - Kordinat"
+                ],
+                "summary": "Update Kordinat",
+                "description": "update data kordinat",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "latitude": {
+                                        "type": "string"
+                                    },
+                                    "longitude": {
+                                        "type": "string"
+                                    },
+                                    "radius": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "example1": {
+                                    "value": {
+                                        "latitude": "-7.175392",
+                                        "longitude": "107.827153",
+                                        "radius": "20"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "key": "latitude",
+                                                    "value": "-7.175392"
+                                                },
+                                                {
+                                                    "key": "longitude",
+                                                    "value": "107.827153"
+                                                },
+                                                {
+                                                    "key": "radius",
+                                                    "value": "20"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

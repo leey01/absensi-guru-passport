@@ -9,5 +9,7 @@ class KategoriKaryawan extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['kategori'];
+
     protected $hidden = ['created_at', 'updated_at', 'pivot'];
 }

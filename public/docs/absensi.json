@@ -906,6 +906,48 @@
                     }
                 }
             }
+        },
+        "/setting/kordinat": {
+            "get": {
+                "tags": [
+                    "Kordinat"
+                ],
+                "summary": "Get Kordinat",
+                "description": "get data kordinat",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": [
+                                                {
+                                                    "key": "latitude",
+                                                    "value": "-7.175392"
+                                                },
+                                                {
+                                                    "key": "longitude",
+                                                    "value": "107.827153"
+                                                },
+                                                {
+                                                    "key": "radius",
+                                                    "value": "20"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

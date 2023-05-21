@@ -93,7 +93,6 @@ class HomeController extends Controller
         $jmlKehadiran = $jmlKehadiran->original;
         $jmlKehadiran = $jmlKehadiran['data'];
         event(new JmlKehadiranEvent($jmlKehadiran));
-        event(new KehadiranEvent($absen->id));
 
         return response()->json([
             'message' => 'absen masuk berhasil',
@@ -177,7 +176,6 @@ class HomeController extends Controller
         $jmlKehadiran = $jmlKehadiran->original;
         $jmlKehadiran = $jmlKehadiran['data'];
         event(new JmlKehadiranEvent($jmlKehadiran));
-        event(new KehadiranEvent($id));
 
         $absen = Absensi::find($id);
         return response()->json([
@@ -223,7 +221,11 @@ class HomeController extends Controller
             ], 503);
         }
 
-        event(new IzinEvent($izin->id));
+        $dashboard = new DashboardController();
+        $jmlKehadiran = $dashboard->dashboard();
+        $jmlKehadiran = $jmlKehadiran->original;
+        $jmlKehadiran = $jmlKehadiran['data'];
+        event(new JmlKehadiranEvent($jmlKehadiran));
 
         return response()->json([
             'message' => 'izin berhasil',

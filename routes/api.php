@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Http\Controllers\Admin\KategoriKaryawanController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -121,3 +123,23 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kalende
     Route::get('/get-kategori', [\App\Http\Controllers\Admin\KalenderController::class, 'getKategori']);
     Route::get('/get-karyawan', [\App\Http\Controllers\Admin\KalenderController::class, 'getKaryawan']);
 });
+
+// Route Admin Setting
+Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting'], function () {
+    // Kategori
+    Route::group(['prefix' => 'kategori'], function () {
+        Route::get('/', [KategoriKaryawanController::class, 'index']);
+        Route::post('/store', [KategoriKaryawanController::class, 'store']);
+        Route::post('/update/{id}', [KategoriKaryawanController::class, 'update']);
+        Route::get('/delete/{id}', [KategoriKaryawanController::class, 'delete']);
+        Route::get('/get-karyawan', [KategoriKaryawanController::class, 'getAllKaryawan']);
+        Route::post('/assign', [KategoriKaryawanController::class, 'assignKategori']);
+    });
+    // Kordinat
+    Route::group(['prefix' => 'kordinat'], function () {
+        Route::post('/update', [SettingController::class, 'updateDataKordinat']);
+    });
+});
+// get data kordinat
+Route::get('/setting/kordinat', [SettingController::class, 'getDataKordinat']);
+
