@@ -40,6 +40,6 @@ class DatabaseSeeder extends Seeder
         KategoriKaryawan::factory(5)->create();
         $this->call([KategoriKaryawanSeeder::class]);
         $this->call([PesertaSeeder::class]);
-        Setting::factory(5)->create();
+        $this->call([SettingSeeder::class]);
     }
 }
