@@ -146,7 +146,6 @@ class KategoriKaryawanController extends Controller
     public function assignKategori()
     {
         $validator = Validator::make(request()->all(), [
-            'karyawan_id' => 'required',
             'kategori_id' => 'required'
         ]);
 
@@ -161,6 +160,10 @@ class KategoriKaryawanController extends Controller
         $kategori = request('kategori_id');
 
         try {
+            DB::table('kategori_karyawan_users')
+                ->where('kategori_id', $kategori)
+                ->delete();
+
             foreach ($karyawans as $karyawan) {
                 DB::table('kategori_karyawan_users')
                     ->insert([
@@ -177,6 +180,24 @@ class KategoriKaryawanController extends Controller
 
         return response()->json([
             'message' => 'success'
+        ]);
+    }
+
+    public function show($id)
+    {
+        $kategori = KategoriKaryawan::where('id', $id)
+            ->with('users')
+            ->get();
+
+        if (!$kategori) {
+            return response()->json([
+                'message' => 'id not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $kategori
         ]);
     }
 }
