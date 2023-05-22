@@ -1950,6 +1950,11 @@
         },
         "/setting/kategori": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kategori"
                 ],
@@ -2005,6 +2010,11 @@
         },
         "/setting/kategori/store": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kategori"
                 ],
@@ -2058,6 +2068,11 @@
         },
         "/setting/kategori/update/{id}": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kategori"
                 ],
@@ -2127,6 +2142,11 @@
         },
         "/setting/kategori/delete/{id}": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kategori"
                 ],
@@ -2171,6 +2191,11 @@
         },
         "/setting/kategori/get-karyawan": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kategori"
                 ],
@@ -2244,8 +2269,66 @@
                 }
             }
         },
+        "/setting/kategori/detail/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Setting - Kategori"
+                ],
+                "summary": "Get Detail Kategori",
+                "description": "get detail data kategori",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id kategori",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "example1": {
+                                "value": 7
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+
+                                },
+                                "examples": {
+                                    "200": {
+                                        "value": {
+                                            "message": "success",
+                                            "data": {
+                                                "id": 7,
+                                                "nama_kategori": "Guru Tetap"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/setting/kategori/assign": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kategori"
                 ],
@@ -2306,6 +2389,11 @@
         },
         "/setting/kordinat": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kordinat"
                 ],
@@ -2348,6 +2436,11 @@
         },
         "/setting/kordinat/update": {
             "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Setting - Kordinat"
                 ],
