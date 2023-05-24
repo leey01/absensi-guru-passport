@@ -58,7 +58,7 @@ class User extends Authenticatable
         if ($this->pf_foto) {
             return Storage::disk('public')->url($this->pf_foto);
         } else {
-            return url('/storage/profile/userdefault.png');
+            return url('/storage/profile/userdefault.jpg');
         }
     }
 

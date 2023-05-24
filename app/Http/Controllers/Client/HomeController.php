@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Izin;
 use App\Models\Jadwal;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -268,11 +269,22 @@ class HomeController extends Controller
         $jadwalAbsen ? $jadwalMasuk = $jadwalAbsen->jam_masuk : $jadwalMasuk = '';
         $jadwalAbsen ? $jadwalPulang = $jadwalAbsen->jam_pulang : $jadwalPulang = '';
 
+        // kordinat
+        $kor = Setting::whereIn("key", ["longitude", "latitude", "radius"])
+            ->get()
+            ->groupBy("key");
+
+        foreach ($kor as $key => $value) {
+            $kor[$key] = $value[0]->value ?? '';
+        }
+
+        // add id absen
+        $kor['id_absen'] = $dataAbsenMasuk->id ?? 0;
+
         return response()->json([
             'user' => [
                 'name' => $user->nama,
                 'email' => $user->email,
-                'id_absen' => $dataAbsenMasuk->id ?? 0
             ],
             'jadwal_absen' => [
                 'masuk' => Carbon::parse($jadwalMasuk)->format('H.i'),
@@ -285,7 +297,8 @@ class HomeController extends Controller
             'waktu_absen' => [
                 'masuk' =>  "$tanggalMasuk $waktuMasuk" ?? '',
                 'pulang' => "$tanggalPulang $waktuPulang" ?? '',
-            ]
+            ],
+            'absen' => $kor
         ]);
     }
 

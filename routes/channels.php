@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -19,4 +20,9 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('notif.event.{receiver}', function ($user, $receiver) {
     return (int) $user->id === (int) $receiver;
+});
+
+Broadcast::channel('jml-kehadiran-channel.{tanggal}', function ($user, $tanggal) {
+    $now = Carbon::now()->format('Y-m-d');
+    return $now == $tanggal;
 });

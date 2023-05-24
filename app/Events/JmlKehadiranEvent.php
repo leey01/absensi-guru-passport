@@ -15,6 +15,8 @@ class JmlKehadiranEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $tanggal;
+
     public int $jmlKaryawan;
     public int $jmlMasuk;
     public int $jmlIzin;
@@ -31,6 +33,7 @@ class JmlKehadiranEvent implements ShouldBroadcast
         $this->jmlMasuk = $data['jumlah_masuk'];
         $this->jmlIzin = $data['jumlah_izin'];
         $this->jmlAbsen = $data['jumlah_absen'];
+        $this->tanggal = $data['tanggal'];
     }
 
     /**
@@ -41,7 +44,7 @@ class JmlKehadiranEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         return [
-            new Channel('jml-kehadiran-channel')
+            new PrivateChannel("jml-kehadiran-channel.{$this->tanggal}")
         ];
     }
 
@@ -57,6 +60,7 @@ class JmlKehadiranEvent implements ShouldBroadcast
             'jumlah_masuk' => $this->jmlMasuk,
             'jumlah_izin' => $this->jmlIzin,
             'jumlah_absen' => $this->jmlAbsen,
+            'tanggal' => $this->tanggal,
         ];
     }
 }
