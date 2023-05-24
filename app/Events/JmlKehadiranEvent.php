@@ -44,7 +44,7 @@ class JmlKehadiranEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         return [
-            new PrivateChannel("jml-kehadiran-channel.{$this->tanggal}")
+            new Channel("jml-kehadiran-channel")
         ];
     }
 

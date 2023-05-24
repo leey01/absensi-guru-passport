@@ -22,6 +22,3 @@ Broadcast::channel('notif.event.{receiver}', function ($user, $receiver) {
     return (int) $user->id === (int) $receiver;
 });
 
-Broadcast::channel('jml-kehadiran-channel.{tanggal}', function (Carbon $carbon, $tanggal) {
-    return $carbon->now()->format('Y-m-d') == $tanggal;
-});
