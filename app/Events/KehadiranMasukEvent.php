@@ -14,7 +14,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class KehadiranEvent implements ShouldBroadcast
+class KehadiranMasukEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -32,7 +32,7 @@ class KehadiranEvent implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'kehadiran-event';
+        return 'kehadiran-masuk-event';
     }
 
     /**
@@ -42,7 +42,7 @@ class KehadiranEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('kehadiran-channel');
+        return new Channel('kehadiran-masuk-channel');
     }
 
     public function broadcastWith()

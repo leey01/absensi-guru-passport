@@ -11,14 +11,14 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class JmlKehadiranEvent implements ShouldBroadcast
+class JmlKehadiranDashboardEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $tanggal;
 
     public int $jmlKaryawan;
-    public int $jmlKehadiran;
+    public int $jmlMasuk;
     public int $jmlIzin;
     public int $jmlAbsen;
 
@@ -30,7 +30,7 @@ class JmlKehadiranEvent implements ShouldBroadcast
     public function __construct($data)
     {
         $this->jmlKaryawan = $data['jumlah_karyawan'];
-        $this->jmlKehadiran = $data['jumlah_kehadiran'];
+        $this->jmlMasuk = $data['jumlah_masuk'];
         $this->jmlIzin = $data['jumlah_izin'];
         $this->jmlAbsen = $data['jumlah_absen'];
         $this->tanggal = $data['tanggal'];
@@ -44,20 +44,20 @@ class JmlKehadiranEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         return [
-            new Channel("jml-kehadiran-channel")
+            new Channel("jml-kehadiran-dashboard-channel")
         ];
     }
 
     public function broadcastAs()
     {
-        return 'jml-kehadiran-event';
+        return 'jml-kehadiran-dashboard-event';
     }
 
     public function broadcastWith()
     {
         return [
             'jumlah_karyawan' => $this->jmlKaryawan,
-            'jumlah_kehadiran' => $this->jmlKehadiran,
+            'jumlah_masuk' => $this->jmlMasuk,
             'jumlah_izin' => $this->jmlIzin,
             'jumlah_absen' => $this->jmlAbsen,
             'tanggal' => $this->tanggal,

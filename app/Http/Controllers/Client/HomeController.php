@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Client;
 
 use App\Events\IzinEvent;
+use App\Events\JmlKehadiranDashboardEvent;
 use App\Events\JmlKehadiranEvent;
-use App\Events\KehadiranEvent;
+use App\Events\KehadiranMasukEvent;
+use App\Events\KehadiranPulangEvent;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\KehadiranController;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Izin;
@@ -89,11 +92,22 @@ class HomeController extends Controller
             ], 401);
         }
 
+        // Instance DashboardController
         $dashboard = new DashboardController();
         $jmlKehadiran = $dashboard->dashboard();
         $jmlKehadiran = $jmlKehadiran->original;
         $jmlKehadiran = $jmlKehadiran['data'];
-        event(new JmlKehadiranEvent($jmlKehadiran));
+        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
+
+        // Instance KehadiranController
+        $kehadiran = new KehadiranController();
+        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
+        $jmlkehadiran = $jmlkehadiran->original;
+        $jmlkehadiran = $jmlkehadiran['data'];
+        event(new JmlKehadiranEvent($jmlkehadiran));
+
+        // dispatch event kehadiran
+        event(new KehadiranMasukEvent($absen->id));
 
         return response()->json([
             'message' => 'absen masuk berhasil',
@@ -172,11 +186,22 @@ class HomeController extends Controller
             ], 401);
         }
 
+        // Instance DashboardController
         $dashboard = new DashboardController();
         $jmlKehadiran = $dashboard->dashboard();
         $jmlKehadiran = $jmlKehadiran->original;
         $jmlKehadiran = $jmlKehadiran['data'];
-        event(new JmlKehadiranEvent($jmlKehadiran));
+        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
+
+        // Instance KehadiranController
+        $kehadiran = new KehadiranController();
+        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
+        $jmlkehadiran = $jmlkehadiran->original;
+        $jmlkehadiran = $jmlkehadiran['data'];
+        event(new JmlKehadiranEvent($jmlkehadiran));
+
+        // dispatch event kehadiran
+        event(new KehadiranPulangEvent($id));
 
         $absen = Absensi::find($id);
         return response()->json([
@@ -226,7 +251,7 @@ class HomeController extends Controller
         $jmlKehadiran = $dashboard->dashboard();
         $jmlKehadiran = $jmlKehadiran->original;
         $jmlKehadiran = $jmlKehadiran['data'];
-        event(new JmlKehadiranEvent($jmlKehadiran));
+        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
 
         return response()->json([
             'message' => 'izin berhasil',

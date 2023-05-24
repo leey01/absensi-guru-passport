@@ -305,7 +305,8 @@ class KehadiranController extends Controller
                 'jumlah_karyawan' => $jmlKaryawan,
                 'jumlah_kehadiran' => $jmlKehadiran,
                 'jumlah_izin' => $jmlIzin,
-                'jumlah_absen' => $jmlAbsen
+                'jumlah_absen' => $jmlAbsen,
+                'tanggal' => $startTime
             ]
         ]);
     }
