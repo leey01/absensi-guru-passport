@@ -247,11 +247,21 @@ class HomeController extends Controller
             ], 503);
         }
 
+        // Instance DashboardController
         $dashboard = new DashboardController();
         $jmlKehadiran = $dashboard->dashboard();
         $jmlKehadiran = $jmlKehadiran->original;
         $jmlKehadiran = $jmlKehadiran['data'];
         event(new JmlKehadiranDashboardEvent($jmlKehadiran));
+
+        // Instance KehadiranController
+        $kehadiran = new KehadiranController();
+        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
+        $jmlkehadiran = $jmlkehadiran->original;
+        $jmlkehadiran = $jmlkehadiran['data'];
+        event(new JmlKehadiranEvent($jmlkehadiran));
+
+        event(new IzinEvent($izin->id));
 
         return response()->json([
             'message' => 'izin berhasil',
