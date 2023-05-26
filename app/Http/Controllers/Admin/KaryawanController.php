@@ -163,7 +163,7 @@ class KaryawanController extends Controller
         ]);
 
         // create jadwal
-        $data = $request->input('jadwal');
+        $data = $request->input('jadwal', []);
         if (empty($data)){
             $data = [];
         }
@@ -178,7 +178,7 @@ class KaryawanController extends Controller
 
 
         // create kategori
-        $req = $request->input('ktg_karyawan');
+        $req = $request->input('ktg_karyawan', []);
         if (empty($req)){
             $req = [];
         }
@@ -376,7 +376,7 @@ class KaryawanController extends Controller
         ]);
 
         // update jadwal
-        $data = $request->input('jadwal');
+        $data = $request->input('jadwal', []);
         if (empty($data)) {
             $data = [];
         } else {
@@ -392,7 +392,7 @@ class KaryawanController extends Controller
         }
 
         // update kategori
-        $req = $request->input('ktg_karyawan');
+        $req = $request->input('ktg_karyawan', []);
         if (empty($req)) {
             $req = [];
         } else {
