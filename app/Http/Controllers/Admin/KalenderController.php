@@ -186,7 +186,11 @@ class KalenderController extends Controller
                 ->orWhere('niy', 'like', '%' . $request->search . '%')
                 ->get();
 
+        }
+
+        if (isset($request->kategori_id) ? true : false) {
             $karyawans = User::with('ktgkaryawan')->get();
+            $result = [];
 
             foreach ($karyawans as $karyawan) {
                 foreach ($karyawan->ktgkaryawan as $ktg) {
