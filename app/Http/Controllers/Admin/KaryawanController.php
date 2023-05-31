@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Resources\KaryawanResource;
+use App\Imports\UsersImport;
 use App\Models\Jadwal;
 use App\Models\KategoriKaryawan;
 use App\Models\User;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
@@ -77,56 +79,6 @@ class KaryawanController extends Controller
         ]);
     }
 
-    public function storeUser(Request $request)
-    {
-        $default_password = 'smkrus';
-        $validator = Validator::make(request()->all(), [
-            'nama' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-            'niy' => ['required'],
-            'alamat' => ['required'],
-            'no_hp' => ['required'],
-            'pf_foto' => ['image:jpeg,png,jpg', 'file']
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'failed',
-                'errors' => $validator->errors()
-            ], 400);
-        } else {
-            try {
-//            $image_path = $request->file('pf_foto')->store('/profile');
-
-                $foto_path = 'profile/' . time() . $request->pf_foto->getClientOriginalName();
-                Storage::disk('public')->put($foto_path, file_get_contents($request->pf_foto));
-                $image_path = Storage::disk('public')->url($foto_path);
-
-                $user = User::create([
-                    'nama' => $request->nama,
-                    'email' => $request->email,
-                    'niy' => $request->niy,
-                    'password' => Hash::make($default_password),
-                    'alamat' => $request->alamat,
-                    'no_hp' => $request->no_hp,
-                    'pf_foto' => $foto_path
-                ]);
-
-                return response()->json([
-                    'message' => 'success',
-                    'user' => $user
-                ]);
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'message' => 'failed',
-                    'errors' => $th->getMessage()
-                ]);
-            }
-        }
-
-    }
-
     public function store(Request $request)
     {
         $validator = Validator::make(request()->all(), [
@@ -136,7 +88,7 @@ class KaryawanController extends Controller
             'niy' => ['required'],
             'alamat' => ['required'],
             'no_hp' => ['required'],
-//            'pf_foto' => ['image:jpeg,png,jpg', 'file'],
+            'pf_foto' => ['image:jpeg,png,jpg', 'file'],
         ]);
 
         if ($validator->fails()){
@@ -164,9 +116,7 @@ class KaryawanController extends Controller
 
         // create jadwal
         $data = $request->input('jadwal', []);
-        if (empty($data)){
-            $data = [];
-        }
+
         foreach ($data as $item) {
             Jadwal::create([
                 'user_id' => $user->id,
@@ -196,64 +146,6 @@ class KaryawanController extends Controller
         ]);
     }
 
-    public function updateUser(Request $request, $id)
-    {
-        $user = User::find($id);
-
-        if (!$user) {
-            return Response::json(['message' => 'Id not found'], 404);
-        }
-
-        // get data
-        $validator = Validator::make(request()->all(), [
-            'nama' => ['required'],
-            'email' => ['required', 'email'],
-            'alamat' => ['required'],
-            'no_hp' => ['required'],
-            'pf_foto' => ['image:jpeg,png,jpg', 'file']
-        ]);
-
-//        $image_path = $request->file('pf_foto')->store('/profile');
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'failed',
-                'errors' => $validator->errors()
-            ]);
-        }
-
-        if ($request->hasFile('pf_foto')) {
-            File::delete($user->pf_foto);
-        }
-
-        try {
-//            $image_path = $request->file('pf_foto')->store('/profile');
-
-            $foto_path = 'profile/' . time() . $request->pf_foto->getClientOriginalName();
-            Storage::disk('public')->put($foto_path, file_get_contents($request->pf_foto));
-            $image_path = Storage::disk('public')->url($foto_path);
-
-            $user = User::where('id', $request->id)->update([
-                'nama' => $request->nama,
-                'email' => $request->email,
-                'alamat' => $request->alamat,
-                'no_hp' => $request->no_hp,
-                'jenis_user' => $request->jenis_user,
-                'pf_foto' => $foto_path,
-            ]);
-            return response()->json([
-                'message' => 'success',
-                'data' => $validator->validated()
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'failed',
-                'errors' => $th->getMessage()
-            ]);
-        }
-    }
-
-
     public function delete($id)
     {
         if (!User::find($id)) {return Response::json(['message' => 'Id not found'], 404);}
@@ -270,62 +162,6 @@ class KaryawanController extends Controller
                 'errors' => $th->getMessage()
             ], 400);
         }
-    }
-
-    public function testUpdate(Request $request)
-    {
-        $data = $request->input('jadwal');
-
-        try {
-            foreach ($data as $item) {
-                Jadwal::create([
-                    'user_id' => $request->user_id,
-                    'hari' => $item['hari'],
-                    'jam_masuk' => $item['jam_masuk'],
-                    'jam_pulang' => $item['jam_pulang'],
-                ]);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'failed',
-                'errors' => $th->getMessage()
-            ]);
-        }
-
-//        Jadwal::create([
-//            'user_id' => $request->user_id,
-//            'hari' => 'Senin',
-//            'jam_masuk' => $request->input('senin.jam_masuk'),
-//            'jam_pulang' => $request->input('senin.jam_pulang'),
-//        ]);
-
-        $result = Jadwal::where('user_id', $request->user_id)->get();
-        return response()->json([
-            'message' => 'success',
-            'data' => $result
-        ]);
-    }
-
-    public function testKategori(Request $request, $id)
-    {
-        $user = User::with(['ktgkaryawan'])->find($id);
-        $req = $request->input('ktg_karyawan');
-
-        DB::table('kategori_karyawan_users')
-            ->where('user_id', $id)
-            ->delete();
-
-        foreach ($req as $item) {
-            DB::table('kategori_karyawan_users')->insert([
-                'user_id' => $id,
-                'kategori_id' => $item
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'success',
-            'data' => $req
-        ]);
     }
 
     public function update(Request $request, $id)
@@ -412,6 +248,30 @@ class KaryawanController extends Controller
         return response()->json([
             'message' => 'success',
             'data' => $result
+        ]);
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make(request()->all(), [
+            'file' => ['required', 'mimes:xls,xlsx']
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $file = $request->file('file');
+        $nama_file = rand().$file->getClientOriginalName();
+        $file->move('import', $nama_file);
+
+        Excel::import(new UsersImport, public_path('/import/'.$nama_file));
+
+        return response()->json([
+            'message' => 'success',
         ]);
     }
 }

@@ -103,7 +103,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'karyawa
     Route::get('/kategori', [KaryawanController::class, 'getKategori']);
     Route::get('/', [KaryawanController::class, 'index']);
     Route::post('/store', [KaryawanController::class, 'store']);
-
+    Route::post('/import', [KaryawanController::class, 'import']);
     Route::get('/detail/{id}', [KaryawanController::class, 'show']);
     Route::post('/update/{id}', [KaryawanController::class, 'update']);
 

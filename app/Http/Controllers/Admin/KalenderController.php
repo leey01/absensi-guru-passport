@@ -185,18 +185,19 @@ class KalenderController extends Controller
                 })
                 ->orWhere('niy', 'like', '%' . $request->search . '%')
                 ->get();
-        }
 
+            $karyawans = User::with('ktgkaryawan')->get();
 
-        $karyawans = User::with('ktgkaryawan')->get();
-
-        foreach ($karyawans as $karyawan) {
-            foreach ($karyawan->ktgkaryawan as $ktg) {
-                if ($ktg->id == $request->kategori_id) {
-                    $result = array_merge($result, [$karyawan]);
+            foreach ($karyawans as $karyawan) {
+                foreach ($karyawan->ktgkaryawan as $ktg) {
+                    if ($ktg->id == $request->kategori_id) {
+                        $result = array_merge($result, [$karyawan]);
+                    }
                 }
             }
         }
+
+        $result = User::with('ktgkaryawan')->get();
 
         return response()->json([
             'message' => 'success',
