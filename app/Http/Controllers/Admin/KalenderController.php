@@ -175,7 +175,7 @@ class KalenderController extends Controller
 
     public function getKaryawan(Request $request)
     {
-        $result = [];
+        $result = User::with('ktgkaryawan')->get();
 
         if (isset($request->search) ? true : false) {
             $result = User::with('ktgkaryawan')
@@ -196,8 +196,6 @@ class KalenderController extends Controller
                 }
             }
         }
-
-        $result = User::with('ktgkaryawan')->get();
 
         return response()->json([
             'message' => 'success',
