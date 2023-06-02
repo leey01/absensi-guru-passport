@@ -60,6 +60,7 @@ class KalenderController extends Controller
             $event = Event::create([
                 'user_id' => Auth::user()->id,
                 'judul' => $request->judul,
+                'lokasi' => $request->lokasi,
                 'kategori_event' => $request->kategori_event,
                 'waktu_mulai' => $request->waktu_mulai,
                 'waktu_selesai' => $request->waktu_selesai,
