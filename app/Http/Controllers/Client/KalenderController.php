@@ -37,7 +37,7 @@ class KalenderController extends Controller
                 ->whereHas('event', function ($query) use ($request) {
                     $query->whereMonth('waktu_mulai', $request->bulan);
                 })
-                ->first();
+                ->get();
 
         } catch (QueryException $e) {
             return response()->json([
