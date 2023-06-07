@@ -135,6 +135,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
         Route::get('/get-karyawan', [KategoriKaryawanController::class, 'getAllKaryawan']);
         Route::get('/detail/{id}', [KategoriKaryawanController::class, 'show']);
         Route::post('/assign', [KategoriKaryawanController::class, 'assignKategori']);
+        Route::get('/unassign', [KategoriKaryawanController::class, 'unAssignKategori']);
     });
     // Kordinat
     Route::group(['prefix' => 'kordinat'], function () {

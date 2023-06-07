@@ -21,7 +21,8 @@ class KalenderController extends Controller
     public function index(Request $request)
     {
         $validator = Validator::make(request()->all(), [
-            'bulan' => 'required',
+            'start_time' => 'required|date_format:Y-m-d',
+            'end_time' => 'required|date_format:Y-m-d'
         ]);
 
         if ($validator->fails()){
@@ -32,11 +33,10 @@ class KalenderController extends Controller
         }
 
         try {
-            $events = User::where('id', auth()->user()->id)
-                ->with('event')
-                ->whereHas('event', function ($query) use ($request) {
-                    $query->whereMonth('waktu_mulai', $request->bulan);
-                })
+            $events = Event::whereHas('peserta', function ($query) use ($request) {
+                $query->where('user_id', Auth::user()->id);
+            })->whereRaw('DATE(waktu_mulai) >= ? AND DATE(waktu_mulai) <= ?', [$request->start_time, $request->end_time])
+                ->orWhereRaw('DATE(waktu_selesai) >= ? AND DATE(waktu_selesai) <= ?', [$request->start_time, $request->end_time])
                 ->get();
 
         } catch (QueryException $e) {
