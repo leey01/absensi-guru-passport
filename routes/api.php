@@ -145,3 +145,4 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
 // get data kordinat
 Route::get('/setting/kordinat', [SettingController::class, 'getDataKordinat']);
 
+Route::get('/get-user-blom-absen', [TestController::class, 'testYgBlomAbsen']);

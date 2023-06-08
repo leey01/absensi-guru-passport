@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Client\ProfileResource;
 use App\Models\Absensi;
 use App\Models\Izin;
+use App\Models\Jadwal;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -18,24 +20,29 @@ class ProfileController extends Controller
     public function index()
     {
         $user = User::where('id', Auth::user()->id)->first();
+        $jmlJadwal = Jadwal::where('user_id', Auth::user()->id)
+            ->where('')
+            ->count();
+        $tanggal = Carbon::now()->format('Y-m-d');
+        $startMonth = Carbon::now()->startOfMonth();
+        $today = Carbon::now()->format('Y-m-d');
 
         try {
-            $masuk = Absensi::where('user_id', Auth::user()->id)
-                ->where('keterangan', 'masuk')
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
-                ->count();
-
-            $pulang = Absensi::where('user_id', Auth::user()->id)
-                ->where('keterangan', 'pulang')
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
+            $kehadiran = Absensi::where('user_id', Auth::user()->id)
+                ->where('is_valid_masuk', '1')
+                ->where('isvld_wkt_masuk', '1')
+                ->where('is_valid_pulang', '1')
+                ->where('isvld_wkt_pulang', '1')
+                ->where('tanggal_pulang', $tanggal)
                 ->count();
 
             $izin = Izin::where('user_id', Auth::user()->id)
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
+                ->whereDate('mulai_izin', '<=', $tanggal)
+                ->whereDate('selesai_izin', '>=', $tanggal)
                 ->count();
+
+            $absen = [$startMonth, $today];
+
 
         } catch (QueryException $e) {
             return response()->json([
