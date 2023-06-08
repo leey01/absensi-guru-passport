@@ -59,10 +59,10 @@ class HomeController extends Controller
 
         // validasi waktu masuk
         if ($jadwal) {
-            if (Carbon::now()->format('H:i:s') < $jadwal->jam_masuk){
-                $isValid = true;
+            if (Carbon::now()->format('H:i:s') <= $jadwal->jam_masuk){
+                $isValid = 1;
             } else {
-                $isValid = false;
+                $isValid = 0;
             }
         } else {
             return response()->json([
@@ -70,10 +70,14 @@ class HomeController extends Controller
             ], 404);
         }
 
+        $request->is_valid_masuk == 1 && $isValid == 1 ? $valid = 1 : $valid = 0;
+
+
         try {
             $absen = Absensi::create([
                 'user_id' => Auth::user()->id,
                 'keterangan' => 'masuk',
+                'valid_masuk' => $valid,
                 'is_valid_masuk' => $request->is_valid_masuk,
                 'isvld_wkt_masuk' => $isValid,
                 'catatan_masuk' => $request->catatan_masuk,
@@ -92,26 +96,26 @@ class HomeController extends Controller
             ], 401);
         }
 
-        // Instance DashboardController
-        $dashboard = new DashboardController();
-        $jmlKehadiran = $dashboard->dashboard();
-        $jmlKehadiran = $jmlKehadiran->original;
-        $jmlKehadiran = $jmlKehadiran['data'];
-        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
-
-        // Instance KehadiranController
-        $kehadiran = new KehadiranController();
-        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
-        $jmlkehadiran = $jmlkehadiran->original;
-        $jmlkehadiran = $jmlkehadiran['data'];
-        event(new JmlKehadiranEvent($jmlkehadiran));
-
-        // dispatch event kehadiran
-        event(new KehadiranMasukEvent($absen->id));
+//        // Instance DashboardController
+//        $dashboard = new DashboardController();
+//        $jmlKehadiran = $dashboard->dashboard();
+//        $jmlKehadiran = $jmlKehadiran->original;
+//        $jmlKehadiran = $jmlKehadiran['data'];
+//        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
+//
+//        // Instance KehadiranController
+//        $kehadiran = new KehadiranController();
+//        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
+//        $jmlkehadiran = $jmlkehadiran->original;
+//        $jmlkehadiran = $jmlkehadiran['data'];
+//        event(new JmlKehadiranEvent($jmlkehadiran));
+//
+//        // dispatch event kehadiran
+//        event(new KehadiranMasukEvent($absen->id));
 
         return response()->json([
             'message' => 'absen masuk berhasil',
-            'data' => $absen,
+            'data' => $absen
         ]);
     }
 
@@ -150,10 +154,10 @@ class HomeController extends Controller
 
         // validasi waktu masuk
         if ($jadwal) {
-            if (Carbon::now()->format('H:i:s') > $jadwal->jam_pulang){
-                $isValid = true;
+            if (Carbon::now()->format('H:i:s') >= $jadwal->jam_pulang){
+                $isValid = 1;
             } else {
-                $isValid = false;
+                $isValid = 0;
             }
         } else {
             return response()->json([
@@ -161,23 +165,25 @@ class HomeController extends Controller
             ], 404);
         }
 
+        $request->is_valid_pulang == 1 && $isValid == 1 ? $valid = 1 : $valid = 0;
+
         try {
             $absen = Absensi::where('user_id', Auth::user()->id)
                 ->where('keterangan', 'masuk')
-                ->where('id', $id);
-
-            $absen->update([
-                'keterangan' => 'pulang',
-                'is_valid_pulang' => $request->is_valid_pulang,
-                'isvld_wkt_pulang' => $isValid,
-                'catatan_pulang' => $request->catatan_pulang,
-                'waktu_pulang' => Carbon::now()->format('H:i:s'),
-                'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
-                'foto_pulang' => $fotoPath,
-                'lokasi_pulang' => $request->lokasi_pulang,
-                'longitude_pulang' => $request->longitude_pulang,
-                'latitude_pulang' => $request->latitude_pulang,
-            ]);
+                ->where('id', $id)
+                ->update([
+                    'keterangan' => 'pulang',
+                    'valid_pulang' => $valid,
+                    'is_valid_pulang' => $request->is_valid_pulang,
+                    'isvld_wkt_pulang' => $isValid,
+                    'catatan_pulang' => $request->catatan_pulang,
+                    'waktu_pulang' => Carbon::now()->format('H:i:s'),
+                    'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
+                    'foto_pulang' => $fotoPath,
+                    'lokasi_pulang' => $request->lokasi_pulang,
+                    'longitude_pulang' => $request->longitude_pulang,
+                    'latitude_pulang' => $request->latitude_pulang,
+                ]);
 
         } catch (QueryException $e) {
             return response()->json([
@@ -186,27 +192,28 @@ class HomeController extends Controller
             ], 401);
         }
 
-        // Instance DashboardController
-        $dashboard = new DashboardController();
-        $jmlKehadiran = $dashboard->dashboard();
-        $jmlKehadiran = $jmlKehadiran->original;
-        $jmlKehadiran = $jmlKehadiran['data'];
-        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
-
-        // Instance KehadiranController
-        $kehadiran = new KehadiranController();
-        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
-        $jmlkehadiran = $jmlkehadiran->original;
-        $jmlkehadiran = $jmlkehadiran['data'];
-        event(new JmlKehadiranEvent($jmlkehadiran));
-
-        // dispatch event kehadiran
-        event(new KehadiranPulangEvent($id));
+//        // Instance DashboardController
+//        $dashboard = new DashboardController();
+//        $jmlKehadiran = $dashboard->dashboard();
+//        $jmlKehadiran = $jmlKehadiran->original;
+//        $jmlKehadiran = $jmlKehadiran['data'];
+//        event(new JmlKehadiranDashboardEvent($jmlKehadiran));
+//
+//        // Instance KehadiranController
+//        $kehadiran = new KehadiranController();
+//        $jmlkehadiran = $kehadiran->jmlKehadiran($request);
+//        $jmlkehadiran = $jmlkehadiran->original;
+//        $jmlkehadiran = $jmlkehadiran['data'];
+//        event(new JmlKehadiranEvent($jmlkehadiran));
+//
+//        // dispatch event kehadiran
+//        event(new KehadiranPulangEvent($id));
 
         $absen = Absensi::find($id);
         return response()->json([
             'message' => 'absen pulang berhasil',
-            'data' => $absen
+            'data' => $absen,
+            'test' => $valid
         ]);
     }
 

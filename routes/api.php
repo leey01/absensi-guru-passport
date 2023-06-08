@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\Admin\KategoriKaryawanController;
+use App\Http\Controllers\Admin\RoleAdminController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
@@ -135,11 +136,16 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
         Route::get('/get-karyawan', [KategoriKaryawanController::class, 'getAllKaryawan']);
         Route::get('/detail/{id}', [KategoriKaryawanController::class, 'show']);
         Route::post('/assign', [KategoriKaryawanController::class, 'assignKategori']);
-        Route::get('/unassign', [KategoriKaryawanController::class, 'unAssignKategori']);
+        Route::post('/unassign', [KategoriKaryawanController::class, 'unAssignKategori']);
     });
     // Kordinat
     Route::group(['prefix' => 'kordinat'], function () {
         Route::post('/update', [SettingController::class, 'updateDataKordinat']);
+    });
+    // Role Admin
+    Route::group(['prefix' => 'role-admin'], function () {
+        Route::get('/', [RoleAdminController::class, 'index']);
+        Route::post('/store', [RoleAdminController::class, 'store']);
     });
 });
 // get data kordinat
