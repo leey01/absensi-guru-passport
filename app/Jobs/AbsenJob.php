@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Absensi;
+use App\Models\Izin;
 use App\Models\Jadwal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -33,14 +34,16 @@ class AbsenJob implements ShouldQueue
      */
     public function handle()
     {
+        $today = Carbon::now()->format('Y-m-d');
+
         // cari jadwal hari ini
         $jadwal = Jadwal::where('hari', Carbon::now()->isoFormat('dddd'))
             ->get();
 
         // cari user yg punya jadwal hari ini
-        $users = [];
+        $userPunyaJadwal = [];
         foreach ($jadwal as $jwl) {
-            array_push($users, $jwl->user_id);
+            array_push($userPunyaJadwal, $jwl->user_id);
         }
 
         // cari user yg sudah absen hari ini
@@ -51,11 +54,22 @@ class AbsenJob implements ShouldQueue
             array_push($userSudahAbsen, $abs->user_id);
         }
 
+        // cari user yg sedang izin hari ini
+        $izin = Izin::whereDate('mulai_izin', '<=', $today)
+            ->whereDate('selesai_izin', '>=', $today)
+            ->get();
+        $userizin = [];
+        foreach ($izin as $izn) {
+            array_push($userizin, $izn->user_id);
+        }
+
         // filter id yg duplicate
         $userSudahAbsen = array_unique($userSudahAbsen);
+        $userizin = array_unique($userizin);
+        $userYgGaAbsen = array_unique(array_merge($userSudahAbsen, $userizin));
 
         // cari user yg blom absen hari ini
-        $userBlomAbsen = array_diff($users, $userSudahAbsen);
+        $userBlomAbsen = array_diff($userPunyaJadwal, $userYgGaAbsen);
 
         // sistem otomatis absen untuk user yg belum absen
         foreach ($userBlomAbsen as $user) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\NotifEvent;
 use App\Models\Absensi;
 use App\Models\Event;
+use App\Models\Izin;
 use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -45,14 +46,16 @@ class TestController extends Controller
 
     public function testYgBlomAbsen()
     {
+        $today = Carbon::now()->format('Y-m-d');
+
         // cari jadwal hari ini
         $jadwal = Jadwal::where('hari', Carbon::now()->isoFormat('dddd'))
             ->get();
 
         // cari user yg punya jadwal hari ini
-        $users = [];
+        $userPunyaJadwal = [];
         foreach ($jadwal as $jwl) {
-            array_push($users, $jwl->user_id);
+            array_push($userPunyaJadwal, $jwl->user_id);
         }
 
         // cari user yg sudah absen hari ini
@@ -63,11 +66,22 @@ class TestController extends Controller
             array_push($userSudahAbsen, $abs->user_id);
         }
 
+        // cari user yg sedang izin hari ini
+        $izin = Izin::whereDate('mulai_izin', '<=', $today)
+            ->whereDate('selesai_izin', '>=', $today)
+            ->get();
+        $userizin = [];
+        foreach ($izin as $izn) {
+            array_push($userizin, $izn->user_id);
+        }
+
         // filter id yg duplicate
         $userSudahAbsen = array_unique($userSudahAbsen);
+        $userizin = array_unique($userizin);
+        $userYgGaAbsen = array_unique(array_merge($userSudahAbsen, $userizin));
 
         // cari user yg blom absen hari ini
-        $userBlomAbsen = array_diff($users, $userSudahAbsen);
+        $userBlomAbsen = array_diff($userPunyaJadwal, $userYgGaAbsen);
 
         // sistem otomatis absen untuk user yg belum absen
         foreach ($userBlomAbsen as $user) {
@@ -88,8 +102,10 @@ class TestController extends Controller
         return response()->json([
             'message' => 'user yg blom absen',
             'userblomabsen' => $userBlomAbsen,
-            'userSudahAbsen' => $absen,
-            'users' => $users
+            'userSudahAbsen' => $userSudahAbsen,
+            'users punya jadwal' => $userPunyaJadwal,
+            'izin' => $userizin,
+            'yg ga absen' => $userYgGaAbsen
         ]);
     }
 }

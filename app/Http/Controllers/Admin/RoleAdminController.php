@@ -45,10 +45,25 @@ class RoleAdminController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $data = RoleAdmin::where('id', $id)->first();
-        $data->delete();
+        $validator = Validator::make($request->all(), [
+            'kategori_id.*' => 'required|exists:role_admins,kategori_id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Role Admin tidak ditemukan',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $kategori_id = $request->kategori_id;
+
+        foreach ($kategori_id as $id) {
+            $data = RoleAdmin::where('kategori_id', $id)->first();
+            $data->delete();
+        }
 
         return response()->json([
             'message' => 'Role Admin berhasil dihapus',

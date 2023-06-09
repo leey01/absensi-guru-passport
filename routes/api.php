@@ -62,7 +62,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
     Route::get('/absen', [HistoryController::class, 'absen']);
     Route::get('/izin', [HistoryController::class, 'izin']);
-    Route::get('/recap', [HistoryController::class, 'recap']);
+    Route::get('/rekapan', [HistoryController::class, 'recap']);
 });
 
 // Route Calender
@@ -146,6 +146,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
     Route::group(['prefix' => 'role-admin'], function () {
         Route::get('/', [RoleAdminController::class, 'index']);
         Route::post('/store', [RoleAdminController::class, 'store']);
+        Route::get('/destroy', [RoleAdminController::class, 'destroy']);
     });
 });
 // get data kordinat
