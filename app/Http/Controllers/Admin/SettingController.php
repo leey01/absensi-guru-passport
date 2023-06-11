@@ -56,4 +56,59 @@ class SettingController extends Controller
             'data' => $result
         ]);
     }
+
+    public function indexBatasWaktu()
+    {
+        $result = Setting::whereIn("key", ["batas_waktu_absen_masuk", "batas_waktu_absen_pulang"])
+            ->get()
+            ->groupBy("key");
+
+        foreach ($result as $key => $value) {
+            $result[$key] = $value[0]->value;
+        }
+
+        if (!$result) {
+            return response()->json([
+                'message' => 'error',
+                'data' => 'data not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $result
+        ]);
+    }
+
+    public function updateBatasWaktu(Request $request)
+    {
+        $validator = Validator::make(request()->all(), [
+            'waktu_masuk' => 'required|date_format:H:i:s',
+            'waktu_pulang' => 'required|date_format:H:i:s'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'error',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $waktuMasuk = Setting::where("key", "batas_waktu_absen_masuk")->first();
+        $waktuPulang = Setting::where("key", "batas_waktu_absen_pulang")->first();
+
+        $waktuMasuk->value = $request->waktu_masuk;
+        $waktuMasuk->save();
+
+        $waktuPulang->value = $request->waktu_pulang;
+        $waktuPulang->save();
+
+        return response()->json([
+            'message' => 'success',
+            'data' => [
+                'waktu_masuk' => $waktuMasuk,
+                'waktu_pulang' => $waktuPulang
+            ]
+        ]);
+    }
 }

@@ -148,6 +148,11 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
         Route::post('/store', [RoleAdminController::class, 'store']);
         Route::get('/destroy', [RoleAdminController::class, 'destroy']);
     });
+    // Batas Waktu Absen
+    Route::group(['prefix' => 'batas-waktu'], function () {
+        Route::get('/', [SettingController::class, 'indexBatasWaktu']);
+        Route::post('/update', [SettingController::class, 'updateBatasWaktu']);
+    });
 });
 // get data kordinat
 Route::get('/setting/kordinat', [SettingController::class, 'getDataKordinat']);
