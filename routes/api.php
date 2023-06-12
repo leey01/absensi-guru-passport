@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\Admin\KategoriKaryawanController;
+use App\Http\Controllers\Admin\RoleAdminController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
@@ -61,7 +62,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
     Route::get('/absen', [HistoryController::class, 'absen']);
     Route::get('/izin', [HistoryController::class, 'izin']);
-    Route::get('/recap', [HistoryController::class, 'recap']);
+    Route::get('/rekapan', [HistoryController::class, 'recap']);
 });
 
 // Route Calender
@@ -135,14 +136,30 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
         Route::get('/get-karyawan', [KategoriKaryawanController::class, 'getAllKaryawan']);
         Route::get('/detail/{id}', [KategoriKaryawanController::class, 'show']);
         Route::post('/assign', [KategoriKaryawanController::class, 'assignKategori']);
+        Route::post('/unassign', [KategoriKaryawanController::class, 'unAssignKategori']);
     });
     // Kordinat
     Route::group(['prefix' => 'kordinat'], function () {
         Route::post('/update', [SettingController::class, 'updateDataKordinat']);
     });
+    // Role Admin
+    Route::group(['prefix' => 'role-admin'], function () {
+        Route::get('/', [RoleAdminController::class, 'index']);
+        Route::post('/store', [RoleAdminController::class, 'store']);
+        Route::get('/destroy', [RoleAdminController::class, 'destroy']);
+    });
+    // Batas Waktu Absen
+    Route::group(['prefix' => 'batas-waktu'], function () {
+        Route::get('/', [SettingController::class, 'indexBatasWaktu']);
+        Route::post('/update', [SettingController::class, 'updateBatasWaktu']);
+    });
 });
 // get data kordinat
 Route::get('/setting/kordinat', [SettingController::class, 'getDataKordinat']);
 
+// push notif 
 Route::post('save-token', [App\Http\Controllers\NotifController::class, 'saveToken']);
 Route::post('send-notification', [App\Http\Controllers\NotifController::class, 'sendNotification']);
+
+//test
+Route::get('/get-user-blom-absen', [TestController::class, 'testYgBlomAbsen']);

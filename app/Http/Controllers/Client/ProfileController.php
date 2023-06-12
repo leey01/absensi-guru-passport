@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Client\ProfileResource;
 use App\Models\Absensi;
 use App\Models\Izin;
+use App\Models\Jadwal;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,24 +21,29 @@ class ProfileController extends Controller
     public function index()
     {
         $user = User::where('id', Auth::user()->id)->first();
+        $startMonth = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $endMonth = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         try {
-            $masuk = Absensi::where('user_id', Auth::user()->id)
-                ->where('keterangan', 'masuk')
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
-                ->count();
-
-            $pulang = Absensi::where('user_id', Auth::user()->id)
-                ->where('keterangan', 'pulang')
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
+            $kehadiran = Absensi::where('user_id', Auth::user()->id)
+                ->where('valid_masuk', '1')
+                ->where('valid_pulang', '1')
+                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
                 ->count();
 
             $izin = Izin::where('user_id', Auth::user()->id)
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
+                ->whereDate('selesai_izin', '>=', $startMonth)
+                ->whereDate('mulai_izin', '<=', $endMonth)
                 ->count();
+
+            $absen = Absensi::where('user_id', Auth::user()->id)
+                ->where(function ($query) {
+                    $query->where('valid_masuk', '0')
+                        ->orWhere('valid_pulang', '0');
+                })
+                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+                ->count();
+
 
         } catch (QueryException $e) {
             return response()->json([
@@ -47,7 +55,7 @@ class ProfileController extends Controller
         if ($user->pf_foto) {
             $pf_foto = Storage::disk('public')->url($user->pf_foto);
         } else {
-            $pf_foto = url('/storage/profile/userdefault.png');
+            $pf_foto = url('/storage/profile/userdefault.jpg');
         }
 
         return response()->json([
@@ -60,9 +68,9 @@ class ProfileController extends Controller
                     'pf_foto' => $pf_foto,
                 ],
                 'kehadiran' => [
-                    'masuk' => $masuk,
-                    'pulang' => $pulang,
+                    'kehadiran' => $kehadiran,
                     'izin' => $izin,
+                    'absen' => $absen,
                 ]
             ]
         ], 200);

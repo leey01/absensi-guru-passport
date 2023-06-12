@@ -130,11 +130,12 @@ class KategoriKaryawanController extends Controller
         $search = $request->search;
 
         if ($search) {
-            $data = User::where('nama', 'like', "%$search%")
+            $data = User::with('ktgkaryawan')
+                ->where('nama', 'like', "%$search%")
                 ->orWhere('niy', 'like', "%$search%")
                 ->get();
         } else {
-            $data = User::all();
+            $data = User::with('ktgkaryawan')->get();
         }
 
         return response()->json([
@@ -170,6 +171,41 @@ class KategoriKaryawanController extends Controller
                         'kategori_id' => $kategori,
                         'user_id' => $karyawan
                     ]);
+            }
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed",
+                'data' => $e
+            ], 503);
+        }
+
+        return response()->json([
+            'message' => 'success'
+        ]);
+    }
+
+    public function unAssignKategori(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'unassign.*.user_id' => 'required',
+            'unassign.*.kategori_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'error',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $remove = $request->unassign;
+
+        try {
+            foreach ($remove as $rmv) {
+                DB::table('kategori_karyawan_users')
+                    ->where('user_id', $rmv['user_id'])
+                    ->where('kategori_id', $rmv['kategori_id'])
+                    ->delete();
             }
         } catch (QueryException $e) {
             return response()->json([

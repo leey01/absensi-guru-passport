@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\AbsenJob;
 use App\Jobs\NotifEventJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->job(new NotifEventJob())->dailyAt('07:00');
+        $schedule->job(new AbsenJob())->dailyAt('23:00');
     }
 
     /**

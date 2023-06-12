@@ -15,6 +15,6 @@ class KategoriKaryawan extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'kategori_karyawan_users', 'kategori_id', 'user_id');
+        return $this->belongsToMany(User::class, 'kategori_karyawan_users', 'kategori_id', 'user_id')->with('ktgkaryawan');
     }
 }

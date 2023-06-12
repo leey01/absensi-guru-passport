@@ -93,7 +93,8 @@ class HistoryController extends Controller
     public function recap(Request $request)
     {
         $validator = Validator::make(request()->all(), [
-            'bulan' => 'required',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date',
         ]);
 
         if ($validator->fails()){
@@ -103,15 +104,20 @@ class HistoryController extends Controller
             ], 400);
         }
 
-        $bulan = $request->bulan;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
 
         try {
             $absen = Absensi::where('user_id', Auth::user()->id)
-                ->whereMonth('tanggal_masuk', $bulan)
+                ->whereDate('tanggal_masuk', '>=', $startTime)
+                ->whereDate('tanggal_masuk', '<=', $endTime)
+                ->orderBy('tanggal_masuk', 'asc')
                 ->get();
 
             $izin = Izin::where('user_id', Auth::user()->id)
-                ->whereMonth('mulai_izin', $bulan)
+                ->whereDate('selesai_izin', '>=', $startTime)
+                ->whereDate('mulai_izin', '<=', $endTime)
+                ->orderBy('mulai_izin', 'asc')
                 ->get();
 
         } catch (QueryException $e) {

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class IsAdmin
 {
@@ -21,8 +22,8 @@ class IsAdmin
 //        }
 
         $kategori = $request->user()->ktgkaryawan->toArray();
+        $id_admin = DB::table('role_admins')->pluck('kategori_id')->toArray();
 
-        $id_admin = [1,2];
         $isAdmin = array_filter($kategori, function ($obj) use ($id_admin) {
             foreach ($id_admin as $value) {
                 if ($obj['id'] == $value) {
