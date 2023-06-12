@@ -14,7 +14,9 @@
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",
         "psr/simple-cache": "2.0",
-        "pusher/pusher-php-server": "^7.2"
+        "pusher/pusher-php-server": "^7.2",
+      "ext-http": "*",
+      "ext-curl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

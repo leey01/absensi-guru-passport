@@ -157,4 +157,9 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
 // get data kordinat
 Route::get('/setting/kordinat', [SettingController::class, 'getDataKordinat']);
 
+// push notif 
+Route::post('save-token', [App\Http\Controllers\NotifController::class, 'saveToken']);
+Route::post('send-notification', [App\Http\Controllers\NotifController::class, 'sendNotification']);
+
+//test
 Route::get('/get-user-blom-absen', [TestController::class, 'testYgBlomAbsen']);
