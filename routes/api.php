@@ -163,3 +163,4 @@ Route::post('send-notification', [App\Http\Controllers\NotifController::class, '
 
 //test
 Route::get('/get-user-blom-absen', [TestController::class, 'testYgBlomAbsen']);
+Route::post('/parsedate', [HistoryController::class, 'parseDate']);

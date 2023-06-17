@@ -17,7 +17,7 @@ class NotifController extends Controller
     {
         $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();
 
-        $SERVER_API_KEY = env('FCM_SERVER_KEY', 'AAAAoPB7tBk:APA91bENEK6_2_A_UdlJvL7gFwUJyNctL87X50ov0fizOCLhWzZ73oVDJhcYK7mxpX_zEt7xnHzjtuPVgslX3R5TMlHbN5UOBc4Fz9p1C_WIssUb7pRvHfgY1q7hNfB0M3ZtSRTfmSc0'); // ini dari file .env (Server key
+        $SERVER_API_KEY = env('FCM_SERVER_KEY', 'IssUb7pRvHfgY1q7hNfB0M3ZtSRTfmSc0'); // ini dari file .env (Server key
 
         $data = [
             "registration_ids" => $firebaseToken,
@@ -46,6 +46,6 @@ class NotifController extends Controller
 
         $response = curl_exec($ch);
 
-        dd($response);
+        return response()->json(['response' => $response]);
     }
 }

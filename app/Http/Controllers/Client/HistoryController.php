@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\IzinResource;
 use App\Http\Resources\KehadiranResource;
 use App\Models\Izin;
 use Illuminate\Support\Facades\Validator;
@@ -39,6 +40,11 @@ class HistoryController extends Controller
                 ->whereDate('tanggal_masuk', $request->tanggal)
                 ->first();
 
+            $izin = Izin::where('user_id', Auth::user()->id)
+                ->whereDate('mulai_izin', '<=', $request->tanggal)
+                ->whereDate('selesai_izin', '>=', $request->tanggal)
+                ->first();
+
         } catch (QueryException $e) {
             return response()->json([
                 'message' => "Failed",
@@ -49,7 +55,8 @@ class HistoryController extends Controller
         return response()->json([
             'messege' => 'success',
             'data' => [
-                'absen' => $absensi
+                'absen' => $absensi,
+                'izin' => $izin
             ]
         ], 200);
 
@@ -112,13 +119,21 @@ class HistoryController extends Controller
                 ->whereDate('tanggal_masuk', '>=', $startTime)
                 ->whereDate('tanggal_masuk', '<=', $endTime)
                 ->orderBy('tanggal_masuk', 'asc')
-                ->get();
+                ->get()
+                ->groupBy(function($date) {
+                    return Carbon::parse($date->tanggal_masuk)->format('Y-m-d');
+                });
 
             $izin = Izin::where('user_id', Auth::user()->id)
                 ->whereDate('selesai_izin', '>=', $startTime)
                 ->whereDate('mulai_izin', '<=', $endTime)
                 ->orderBy('mulai_izin', 'asc')
                 ->get();
+
+            $izin = $this->parseDate($izin);
+
+            $izin = collect($izin)->groupBy('tanggal')->toArray();
+
 
         } catch (QueryException $e) {
             return response()->json([
@@ -132,12 +147,28 @@ class HistoryController extends Controller
             'data' => [
                 'absen' => $absen,
                 'izin' => $izin
-            ]
+            ],
         ], 200);
 
     }
 
+    public function parseDate($datas)
+    {
+        $datas = $datas->toArray();
+        $datas = collect($datas);
+        $datas = $datas->sortBy('mulai_izin')->values()->all();
 
+        $rekap = [];
+        foreach ($datas as $data) {
+            $start = Carbon::parse($data['mulai_izin']);
+            $end = Carbon::parse($data['selesai_izin']);
 
+            for ($i = $start; $i <= $end; $i->addDay()) {
+                $rekap[] = array_merge($data, ['tanggal' => Carbon::parse($i)->format('Y-m-d')]);
+            }
+        }
+
+        return $rekap ?? null;
+    }
 
 }
