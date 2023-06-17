@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\Izin;
 use App\Models\Jadwal;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -276,6 +277,48 @@ class TestController extends Controller
             'valid' => $isValid,
             'jadwal' => $jadwalAbsen->format('H:i:s'),
             'time' => $time,
+        ]);
+    }
+
+    public function testAbsenLibur()
+    {
+        $today = Carbon::now()->format('Y-m-d');
+        $users = [];
+
+        // cari event yg hari ini libur
+        $events = Event::with('peserta')
+            ->where('kategori_event', 'libur')
+            ->whereRaw('DATE(waktu_mulai) <= ?', [$today])
+            ->whereRaw('DATE(waktu_selesai) >= ?', [$today])
+            ->get();
+
+        // ambil semua peserta yg ada di event libur
+        foreach ($events as $event) {
+            foreach ($event->peserta as $peserta) {
+                $users[] = $peserta->id;
+            }
+        }
+
+        $users = array_unique($users);
+
+        foreach ($users as $user) {
+            $absen = Absensi::create([
+                'user_id' => $user,
+                'keterangan' => 'libur',
+                'is_valid_masuk' => null,
+                'isvld_wkt_masuk' => null,
+                'catatan_masuk' => '',
+                'waktu_masuk' => '',
+                'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
+                'foto_masuk' => '',
+                'lokasi_masuk' => '',
+                'longitude_masuk' => '',
+                'latitude_masuk' => ''
+            ]);
+        }
+
+        return response()->json([
+            'users' => $users,
         ]);
     }
 }
