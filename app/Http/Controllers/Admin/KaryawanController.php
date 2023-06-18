@@ -22,7 +22,7 @@ class KaryawanController extends Controller
 
     public function index(Request $request)
     {
-        $result = [];
+        $result = array();
 
         if (isset($request->search) ? true : false) {
             $result = User::with('ktgkaryawan')
@@ -32,12 +32,11 @@ class KaryawanController extends Controller
                 })
                 ->orWhere('niy', 'like', '%' . $request->search . '%')
                 ->get();
+            $result = $result->toArray();
         }
 
 
         $karyawans = User::with('ktgkaryawan')->get();
-        // convert to array
-        $result = $result->toArray();
 
         if (isset($request->kategori_id) ? true : false) {
             foreach ($karyawans as $karyawan) {
