@@ -99,12 +99,12 @@ class HistoryController extends Controller
 
     public function recap(Request $request)
     {
-        $validator = Validator::make(request()->all(), [
+        $validator = Validator::make($request->all(), [
             'start_time' => 'required|date',
             'end_time' => 'required|date',
         ]);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return response()->json([
                 'message' => 'wrong required parameter',
                 'data' => $validator->errors()
@@ -120,9 +120,17 @@ class HistoryController extends Controller
                 ->whereDate('tanggal_masuk', '<=', $endTime)
                 ->orderBy('tanggal_masuk', 'asc')
                 ->get()
-                ->groupBy(function($date) {
+                ->groupBy(function ($date) {
                     return Carbon::parse($date->tanggal_masuk)->format('Y-m-d');
-                });
+                })
+                ->map(function ($items, $date) {
+                    return [
+                        'tanggal' => $date,
+                        'data' => $items->toArray()
+                    ];
+                })
+                ->values()
+                ->toArray();
 
             $izin = Izin::where('user_id', Auth::user()->id)
                 ->whereDate('selesai_izin', '>=', $startTime)
@@ -132,8 +140,18 @@ class HistoryController extends Controller
 
             $izin = $this->parseDate($izin);
 
-            $izin = collect($izin)->groupBy('tanggal')->toArray();
-
+            $izin = collect($izin)
+                ->groupBy(function ($date) {
+                    return Carbon::parse($date['tanggal'])->format('Y-m-d');
+                })
+                ->map(function ($items, $date) {
+                    return [
+                        'tanggal' => $date,
+                        'data' => $items->toArray()
+                    ];
+                })
+                ->values()
+                ->toArray();
 
         } catch (QueryException $e) {
             return response()->json([
@@ -145,11 +163,10 @@ class HistoryController extends Controller
         return response()->json([
             'message' => "success",
             'data' => [
-                'absen' => $absen,
-                'izin' => $izin
+                'absen' => array_values($absen),
+                'izin' => $izin ?: []
             ],
         ], 200);
-
     }
 
     public function parseDate($datas)
@@ -162,13 +179,16 @@ class HistoryController extends Controller
         foreach ($datas as $data) {
             $start = Carbon::parse($data['mulai_izin']);
             $end = Carbon::parse($data['selesai_izin']);
+            $data['tanggal'] = $start->format('Y-m-d');
 
-            for ($i = $start; $i <= $end; $i->addDay()) {
-                $rekap[] = array_merge($data, ['tanggal' => Carbon::parse($i)->format('Y-m-d')]);
+            for ($date = $start; $date->lte($end); $date->addDay()) {
+                $rekap[] = array_merge($data, ['tanggal' => $date->format('Y-m-d')]);
             }
         }
 
-        return $rekap ?? null;
+        return $rekap;
     }
+
+
 
 }
