@@ -53,11 +53,10 @@ class DashboardController extends Controller
     {
 
         $data_mingguan = Absensi::whereBetween('created_at', [Carbon::now()->subWeek()->format('Y-m-d'), Carbon::now()])
-            ->where('is_valid_pulang', '1')
-            ->where('isvld_wkt_pulang', '1')
+            ->where('valid_pulang', '1')
             ->orderBy('tanggal_pulang', 'asc')
             ->get()
-            ->groupBy('tanggal_pulang');
+            ->groupBy('tanggal_masuk');
 
         foreach ($data_mingguan as $key=>$value){
             $data_mingguan[$key] = [
@@ -67,11 +66,10 @@ class DashboardController extends Controller
         }
 
         $data_bulanan = Absensi::whereBetween('created_at', [Carbon::now()->subMonth()->format('Y-m-d'), Carbon::now()])
-            ->where('is_valid_pulang', '1')
-            ->where('isvld_wkt_pulang', '1')
+            ->where('valid_pulang', '1')
             ->orderBy('tanggal_pulang', 'asc')
             ->get()
-            ->groupBy('tanggal_pulang');
+            ->groupBy('tanggal_masuk');
 
         foreach ($data_bulanan as $key=>$value){
             $data_bulanan[$key] = [
@@ -86,7 +84,7 @@ class DashboardController extends Controller
             'message' => 'success',
             'data' => [
                 'mingguan' => $data_mingguan->values()->all(),
-                'bulanan' => $data_bulanan->values()->all()
+                'bulanan' => $data_bulanan->values()->all(),
             ]
         ]);
     }

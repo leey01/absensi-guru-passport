@@ -36,11 +36,15 @@ class KaryawanController extends Controller
 
 
         $karyawans = User::with('ktgkaryawan')->get();
+        // convert to array
+        $result = $result->toArray();
 
-        foreach ($karyawans as $karyawan) {
-            foreach ($karyawan->ktgkaryawan as $ktg) {
-                if ($ktg->id == $request->kategori_id) {
-                    $result = array_merge($result, [$karyawan]);
+        if (isset($request->kategori_id) ? true : false) {
+            foreach ($karyawans as $karyawan) {
+                foreach ($karyawan->ktgkaryawan as $ktg) {
+                    if ($ktg->id == $request->kategori_id) {
+                        $result = array_merge($result, [$karyawan]);
+                    }
                 }
             }
         }

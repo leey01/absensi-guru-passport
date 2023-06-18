@@ -62,6 +62,11 @@ class HomeController extends Controller
         $jadwalAbsen = Jadwal::where('user_id', Auth::user()->id)
             ->where('hari', $hari->format('l'))
             ->first();
+        if (!$jadwalAbsen) {
+            return response()->json([
+                'message' => 'jadwal absen tidak ditemukan'
+            ], 404);
+        }
         $jadwalAbsen = Carbon::parse($jadwalAbsen->jam_masuk);
 
         // waktu minimal user bisa absen
@@ -93,10 +98,6 @@ class HomeController extends Controller
                     $message = 'absen masuk terlambat';
                 }
             }
-        } else {
-            return response()->json([
-                'message' => 'jadwal tidak ditemukan, tidak perlu absen'
-            ], 404);
         }
 
         // validasi untuk kolom valid_masuk
