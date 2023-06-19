@@ -387,8 +387,8 @@ class HomeController extends Controller
                 'email' => $user->email,
             ],
             'jadwal_absen' => [
-                'masuk' => Carbon::parse($jadwalMasuk)->format('H.i'),
-                'pulang' => Carbon::parse($jadwalPulang)->format('H.i'),
+                'masuk' => Carbon::parse($jadwalMasuk)->format('H.i') ?? '',
+                'pulang' => Carbon::parse($jadwalPulang)->format('H.i') ?? '',
             ],
             'status_absen' => [
                 'masuk' => $statusMasuk,
