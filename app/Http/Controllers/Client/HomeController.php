@@ -302,6 +302,7 @@ class HomeController extends Controller
                 'mulai_izin' => $request->mulai_izin,
                 'selesai_izin' => $request->selesai_izin,
                 'deskripsi' => $request->deskripsi,
+                'file_name' => $request->file_izin->getClientOriginalName() ?? null,
                 'path_file' => $filePath,
             ]);
 

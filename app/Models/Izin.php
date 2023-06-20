@@ -20,6 +20,7 @@ class Izin extends Model
         'mulai_izin',
         'selesai_izin',
         'deskripsi',
+        'file_name',
         'path_file'
     ];
 
