@@ -34,7 +34,7 @@ class ProfileController extends Controller
             $izin = Izin::where('user_id', Auth::user()->id)
                 ->whereDate('selesai_izin', '>=', $startMonth)
                 ->whereDate('mulai_izin', '<=', $endMonth)
-                ->count();
+                ->get();
 
             $absen = Absensi::where('user_id', Auth::user()->id)
                 ->where(function ($query) {
@@ -43,6 +43,9 @@ class ProfileController extends Controller
                 })
                 ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
                 ->count();
+
+            $izin = $this->parseDate($izin);
+            $izin = count($izin);
 
 
         } catch (QueryException $e) {
@@ -115,6 +118,26 @@ class ProfileController extends Controller
                 'message' => 'error',
             ], 400);
         }
+    }
+
+    public function parseDate($datas)
+    {
+        $datas = $datas->toArray();
+        $datas = collect($datas);
+        $datas = $datas->sortBy('mulai_izin')->values()->all();
+
+        $rekap = [];
+        foreach ($datas as $data) {
+            $start = Carbon::parse($data['mulai_izin']);
+            $end = Carbon::parse($data['selesai_izin']);
+            $data['tanggal'] = $start->format('Y-m-d');
+
+            for ($date = $start; $date->lte($end); $date->addDay()) {
+                $rekap[] = array_merge($data, ['tanggal' => $date->format('Y-m-d')]);
+            }
+        }
+
+        return $rekap;
     }
 
 }
