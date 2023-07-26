@@ -431,6 +431,8 @@ class KehadiranController extends Controller
         $izin = Izin::with(['user'])
             ->find($id);
 
+        $user = User::find($izin->user_id);
+
         if (is_null($izin)){
             return response()->json([
                 'message' => "Data Izin tidak ditemukan!"
@@ -439,7 +441,8 @@ class KehadiranController extends Controller
 
         return response()->json([
             'message' => "success",
-            'data' => $izin
+            'data' => $izin,
+            'user' => $user
         ]);
     }
 }
