@@ -15,9 +15,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        $tanggal = Carbon::now()->format('Y-m-d');
+        $request->tanggal ? $tanggal = $request->tanggal : $tanggal = Carbon::now()->format('Y-m-d');
 
         // Karyawan
         $jmlKaryawan = User::all()
