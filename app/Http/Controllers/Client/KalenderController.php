@@ -33,11 +33,14 @@ class KalenderController extends Controller
         }
 
         try {
-            $events = Event::whereHas('peserta', function ($query) use ($request) {
-                $query->where('user_id', Auth::user()->id);
-            })->whereRaw('DATE(waktu_mulai) >= ? AND DATE(waktu_mulai) <= ?', [$request->start_time, $request->end_time])
-                ->orWhereRaw('DATE(waktu_selesai) >= ? AND DATE(waktu_selesai) <= ?', [$request->start_time, $request->end_time])
-                ->get();
+            $idUser = Auth::user()->id;
+
+            $events = Event::whereHas('peserta', function ($query) use ($idUser) {
+                $query->where('id', $idUser);
+            })->where(function ($query) use ($request) {
+                $query->whereRaw('DATE(waktu_mulai) >= ? AND DATE(waktu_mulai) <= ?', [$request->start_time, $request->end_time])
+                    ->orWhereRaw('DATE(waktu_selesai) >= ? AND DATE(waktu_selesai) <= ?', [$request->start_time, $request->end_time]);
+            })->get();
 
         } catch (QueryException $e) {
             return response()->json([
