@@ -11,9 +11,11 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KehadiranController;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
+use App\Models\HistoryNotif;
 use App\Models\Izin;
 use App\Models\Jadwal;
 use App\Models\Setting;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -438,6 +440,51 @@ class HomeController extends Controller
         return response()->json([
             'message' => 'jadwal absen',
             'data' => $jadwalAbsen
+        ]);
+    }
+
+    public function historyNotif()
+    {
+        $data = User::find(Auth::user()->id)
+            ->historyNotif()
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $dataMapped = $data->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => "Pemberitahuan Acara",
+                'message' => "Hari ini anda punya acara $item->judul",
+                'created_at' => $item->created_at->format('d-m-Y H:i:s')
+            ];
+        });
+
+        return response()->json([
+            'message' => 'history notif',
+            'data' => $dataMapped ?? ''
+        ]);
+    }
+
+    public function readNotif($notif_id)
+    {
+        $notif = $notif_id;
+
+        if (!$notif) {
+            return response()->json([
+                'message' => 'notif id belum di input',
+                'data' => ''
+            ], 400);
+        }
+
+        foreach ($notif as $ntf) {
+            HistoryNotif::where('id', $ntf)
+                ->update([
+                    'read' => true
+                ]);
+        }
+
+        return response()->json([
+            'message' => 'success'
         ]);
     }
 }

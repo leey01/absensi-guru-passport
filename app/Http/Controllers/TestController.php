@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\NotifEvent;
 use App\Models\Absensi;
 use App\Models\Event;
+use App\Models\HistoryNotif;
 use App\Models\Izin;
 use App\Models\Jadwal;
 use App\Models\Setting;
@@ -37,6 +38,11 @@ class TestController extends Controller
         foreach ($events as $event) {
             foreach ($event->peserta as $peserta) {
                 event(new NotifEvent($peserta->id, $event->id));
+
+                HistoryNotif::create([
+                    'user_id' => $peserta->id,
+                    'event_id' => $event->id,
+                ]);
             }
         }
 

@@ -56,6 +56,8 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
     Route::post('/izin', [HomeController::class, 'izin']);
     Route::post('/absen-pulang/{id}', [HomeController::class, 'absenPulang']);
     Route::get('/jadwal', [HomeController::class, 'jadwalAbsen']);
+    Route::get('/history-notif', [HomeController::class, 'historyNotif']);
+    Route::post('/read-notif', [HomeController::class, 'readNotif']);
 });
 
 // Route History

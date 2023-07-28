@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\NotifEvent;
 use App\Models\Event;
+use App\Models\HistoryNotif;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -105,6 +106,11 @@ class NotifController extends Controller
                     ->all();
 
                 $usersToken = array_merge($usersToken, $deviceToken);
+
+                HistoryNotif::create([
+                    'user_id' => $peserta->id,
+                    'event_id' => $event->id,
+                ]);
             }
 
             $data = [

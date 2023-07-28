@@ -294,9 +294,20 @@ class KehadiranController extends Controller
             $jmlIzin = Izin::whereDate('mulai_izin', '<=', $startTime)
                 ->whereDate('selesai_izin', '>=', $startTime)
                 ->count();
-            $jmlAbsen = $jmlKaryawan - (Absensi::where('keterangan', 'masuk')
-                    ->whereDate('tanggal_masuk', $startTime)
-                    ->count());
+
+            $jmlAbsen = Absensi::where(function ($query) {
+                $query->where('valid_masuk', '0')
+                    ->where('valid_pulang', '0')
+                    ->whereDate('tanggal_masuk', Carbon::now()->format('Y-m-d'));
+            })->orWhere(function ($query) {
+                $query->where('valid_masuk', '0')
+                    ->where('valid_pulang', '1')
+                    ->whereDate('tanggal_masuk', Carbon::now()->format('Y-m-d'));
+            })->orWhere(function ($query) {
+                $query->where('valid_masuk', '1')
+                    ->where('valid_pulang', '0')
+                    ->whereDate('tanggal_masuk', Carbon::now()->format('Y-m-d'));
+            })->get();
         }
 
         return response()->json([
