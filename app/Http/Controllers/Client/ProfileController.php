@@ -36,13 +36,30 @@ class ProfileController extends Controller
                 ->whereDate('mulai_izin', '<=', $endMonth)
                 ->get();
 
-            $absen = Absensi::where('user_id', Auth::user()->id)
-                ->where(function ($query) {
-                    $query->where('valid_masuk', '0')
-                        ->orWhere('valid_pulang', '0');
-                })
-                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
-                ->count();
+//            $absen = Absensi::where('user_id', Auth::user()->id)
+//                ->where(function ($query) {
+//                    $query->where('valid_masuk', '0')
+//                        ->orWhere('valid_pulang', '0');
+//                })
+//                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+//                ->count();
+
+            $absen = Absensi::where(function ($query) use ($startMonth, $endMonth, $user) {
+                $query->where('valid_masuk', '0')
+                    ->where('valid_pulang', '0')
+                    ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+                    ->where('user_id', $user->id);
+            })->orWhere(function ($query) use ($startMonth, $endMonth, $user) {
+                $query->where('valid_masuk', '0')
+                    ->where('valid_pulang', '1')
+                    ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+                    ->where('user_id', $user->id);
+            })->orWhere(function ($query) use ($startMonth, $endMonth, $user) {
+                $query->where('valid_masuk', '1')
+                    ->where('valid_pulang', '0')
+                    ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+                    ->where('user_id', $user->id);
+            })->count();
 
             $izin = $this->parseDate($izin);
             $izin = count($izin);
