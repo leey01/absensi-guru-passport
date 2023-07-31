@@ -49,7 +49,7 @@ class Absensi extends Model
         if ($this->foto_masuk) {
             return Storage::disk('public')->url($this->foto_masuk);
         } else {
-            return null;
+            return Storage::disk('public')->url('/image/no-image.png');
         }
     }
 
@@ -58,7 +58,7 @@ class Absensi extends Model
         if ($this->foto_pulang) {
             return Storage::disk('public')->url($this->foto_pulang);
         } else {
-            return null;
+            return Storage::disk('public')->url('/image/no-image.png');
         }
     }
 

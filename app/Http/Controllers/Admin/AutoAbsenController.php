@@ -77,7 +77,7 @@ class AutoAbsenController extends Controller
                 'catatan_masuk' => '',
                 'waktu_masuk' => '',
                 'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
-                'foto_masuk' => '',
+                'foto_masuk' => '/image/no-image.png',
                 'lokasi_masuk' => '',
                 'longitude_masuk' => '',
                 'latitude_masuk' => ''
@@ -94,7 +94,7 @@ class AutoAbsenController extends Controller
                 'catatan_masuk' => 'Izin',
                 'waktu_masuk' => Carbon::now()->format('H:i:s'),
                 'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
-                'foto_masuk' => '',
+                'foto_masuk' => '/image/no-image.png',
                 'lokasi_masuk' => '',
                 'longitude_masuk' => '',
                 'latitude_masuk' => ''
@@ -112,7 +112,7 @@ class AutoAbsenController extends Controller
                 'catatan_masuk' => '',
                 'waktu_masuk' => '',
                 'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
-                'foto_masuk' => '',
+                'foto_masuk' => '/image/no-image.png',
                 'lokasi_masuk' => '',
                 'longitude_masuk' => '',
                 'latitude_masuk' => '',
