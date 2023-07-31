@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Admin\AutoAbsenController;
 use App\Http\Controllers\Admin\KategoriKaryawanController;
 use App\Http\Controllers\Admin\RoleAdminController;
 use App\Http\Controllers\Admin\SettingController;
@@ -157,6 +158,12 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'setting
         Route::post('/update', [SettingController::class, 'updateBatasWaktu']);
     });
 });
+
+// Auto Absen yg belum absen
+Route::get('/auto-absen', [AutoAbsenController::class, 'index']);
+Route::get('/status-users', [AutoAbsenController::class, 'getStatusKehadiranUser']);
+
+
 // get data kordinat
 Route::get('/setting/kordinat', [SettingController::class, 'getDataKordinat']);
 
