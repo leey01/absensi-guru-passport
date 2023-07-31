@@ -61,7 +61,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
 });
 
 // Route History
-Route::get('/history/donload-rekapan', [HistoryController::class, 'donloadKehadiran']);
+Route::get('/history/donload-rekapan', [HistoryController::class, 'donloadKehadiran'])->middleware('auth:sanctum');
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
     Route::get('/absen', [HistoryController::class, 'absen']);
     Route::get('/izin', [HistoryController::class, 'izin']);

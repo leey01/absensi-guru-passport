@@ -205,7 +205,7 @@ class HistoryController extends Controller
             ], 400);
         }
 
-        $user_id = $request->user_id;
+        $user_id = $request->user()->id;
         $startTime = $request->start_time;
         $endTime = $request->end_time;
 
