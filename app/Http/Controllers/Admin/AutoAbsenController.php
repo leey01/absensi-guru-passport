@@ -72,6 +72,8 @@ class AutoAbsenController extends Controller
         foreach ($userBlomAbsen as $user) {
             $absen = Absensi::create([
                 'user_id' => $user,
+                'keterangan' => 'alpha',
+                'valid_masuk' => 0,
                 'is_valid_masuk' => 0,
                 'isvld_wkt_masuk' => 0,
                 'catatan_masuk' => '',
@@ -80,7 +82,17 @@ class AutoAbsenController extends Controller
                 'foto_masuk' => '/image/no-image.png',
                 'lokasi_masuk' => '',
                 'longitude_masuk' => '',
-                'latitude_masuk' => ''
+                'latitude_masuk' => '',
+                'valid_pulang' => 0,
+                'is_valid_pulang' => 0,
+                'isvld_wkt_pulang' => 0,
+                'catatan_pulang' => '',
+                'waktu_pulang' => '',
+                'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
+                'foto_pulang' => '/image/no-image.png',
+                'lokasi_pulang' => '',
+                'longitude_pulang' => '',
+                'latitude_pulang' => '',
             ]);
         }
 
@@ -97,7 +109,17 @@ class AutoAbsenController extends Controller
                 'foto_masuk' => '/image/no-image.png',
                 'lokasi_masuk' => '',
                 'longitude_masuk' => '',
-                'latitude_masuk' => ''
+                'latitude_masuk' => '',
+                'valid_pulang' => 0,
+                'is_valid_pulang' => 0,
+                'isvld_wkt_pulang' => 0,
+                'catatan_pulang' => '',
+                'waktu_pulang' => '',
+                'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
+                'foto_pulang' => '/image/no-image.png',
+                'lokasi_pulang' => '',
+                'longitude_pulang' => '',
+                'latitude_pulang' => '',
             ]);
         }
 
@@ -116,9 +138,16 @@ class AutoAbsenController extends Controller
                 'lokasi_masuk' => '',
                 'longitude_masuk' => '',
                 'latitude_masuk' => '',
-                'valid_pulang' => null,
-                'is_valid_pulang' => null,
-                'isvld_wkt_pulang' => null,
+                'valid_pulang' => 0,
+                'is_valid_pulang' => 0,
+                'isvld_wkt_pulang' => 0,
+                'catatan_pulang' => '',
+                'waktu_pulang' => '',
+                'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
+                'foto_pulang' => '/image/no-image.png',
+                'lokasi_pulang' => '',
+                'longitude_pulang' => '',
+                'latitude_pulang' => '',
             ]);
         }
     }
