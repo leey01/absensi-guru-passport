@@ -345,6 +345,7 @@ class HomeController extends Controller
 
         // data absen masuk
         $dataAbsenMasuk = Absensi::where('user_id', Auth::user()->id)
+            ->where('keterangan', 'masuk')
             ->whereDate('created_at', '=', Carbon::today()->toDateString())
             ->whereNotNull('tanggal_masuk')
             ->first();
@@ -356,6 +357,7 @@ class HomeController extends Controller
 
         // data absen pulang
         $dataAbsenPulang = Absensi::where('user_id', Auth::user()->id)
+            ->where('keterangan', 'pulang')
             ->whereDate('created_at', '=', Carbon::today()->toDateString())
             ->whereNotNull('tanggal_pulang')
             ->first();
