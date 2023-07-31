@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Exports\UserPresensiExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\IzinResource;
 use App\Http\Resources\KehadiranResource;
@@ -13,6 +14,7 @@ use App\Models\Absensi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HistoryController extends Controller
 {
@@ -189,6 +191,25 @@ class HistoryController extends Controller
         return $rekap;
     }
 
+    public function donloadKehadiran(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'start_time' => 'required|date',
+            'end_time' => 'required|date',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $user_id = $request->user_id;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+
+        return Excel::download(new UserPresensiExport($user_id, $startTime, $endTime), "rekapan-kehadiran|$startTime:$endTime.xlsx");
+    }
 
 }

@@ -4,18 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\AbsensiExport;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\KehadiranResource;
 use App\Models\Absensi;
 use App\Models\Izin;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
-use function PHPUnit\Framework\isNull;
-use function PHPUnit\Framework\isTrue;
 
 class KehadiranController extends Controller
 {

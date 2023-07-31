@@ -57,10 +57,11 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'home'], function () {
     Route::post('/absen-pulang/{id}', [HomeController::class, 'absenPulang']);
     Route::get('/jadwal', [HomeController::class, 'jadwalAbsen']);
     Route::get('/history-notif', [HomeController::class, 'historyNotif']);
-    Route::post('/read-notif', [HomeController::class, 'readNotif']);
+//    Route::post('/read-notif', [HomeController::class, 'readNotif']);
 });
 
 // Route History
+Route::get('/history/donload-rekapan', [HistoryController::class, 'donloadKehadiran']);
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'history'], function () {
     Route::get('/absen', [HistoryController::class, 'absen']);
     Route::get('/izin', [HistoryController::class, 'izin']);
