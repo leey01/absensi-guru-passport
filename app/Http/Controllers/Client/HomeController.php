@@ -455,6 +455,7 @@ class HomeController extends Controller
                 'id' => $item->id,
                 'title' => "Pemberitahuan Acara",
                 'message' => "Hari ini anda punya acara $item->judul",
+                'type' => $item->kategori_event,
                 'created_at' => $item->created_at->format('d-m-Y H:i:s')
             ];
         });
