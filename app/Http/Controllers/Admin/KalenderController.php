@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Imports\EventsImport;
 use App\Models\Event;
 use App\Models\KategoriKaryawan;
 use App\Models\User;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KalenderController extends Controller
 {
@@ -205,6 +207,30 @@ class KalenderController extends Controller
         return response()->json([
             'message' => 'success',
             'data' => $result
+        ]);
+    }
+
+    public function importEvents(Request $request)
+    {
+        $validator = Validator::make(request()->all(), [
+            'file' => ['required', 'mimes:xls,xlsx']
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'message' => 'wrong required parameter',
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $file = $request->file('file');
+        $nama_file = rand().$file->getClientOriginalName();
+        $file->move('import/events', $nama_file);
+
+        Excel::import(new EventsImport($request->user()->id), public_path('/import/events/'.$nama_file));
+
+        return response()->json([
+            'message' => 'success',
         ]);
     }
 }

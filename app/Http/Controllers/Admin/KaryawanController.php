@@ -269,9 +269,9 @@ class KaryawanController extends Controller
 
         $file = $request->file('file');
         $nama_file = rand().$file->getClientOriginalName();
-        $file->move('import', $nama_file);
+        $file->move('import/users', $nama_file);
 
-        Excel::import(new UsersImport, public_path('/import/'.$nama_file));
+        Excel::import(new UsersImport, public_path('/import/users/'.$nama_file));
 
         return response()->json([
             'message' => 'success',

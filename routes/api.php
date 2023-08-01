@@ -127,6 +127,7 @@ Route::group(['middleware' => ['auth:sanctum', 'is_admin'], 'prefix' => 'kalende
 
     Route::get('/get-kategori', [\App\Http\Controllers\Admin\KalenderController::class, 'getKategori']);
     Route::get('/get-karyawan', [\App\Http\Controllers\Admin\KalenderController::class, 'getKaryawan']);
+    Route::post('/import', [\App\Http\Controllers\Admin\KalenderController::class, 'importEvents']);
 });
 
 // Route Admin Setting
