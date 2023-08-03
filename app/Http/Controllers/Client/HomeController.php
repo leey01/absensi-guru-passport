@@ -346,6 +346,7 @@ class HomeController extends Controller
         // data absen masuk
         $dataAbsenMasuk = Absensi::where('user_id', Auth::user()->id)
             ->where('keterangan', 'masuk')
+            ->orWhere('keterangan', 'pulang')
             ->whereDate('created_at', '=', Carbon::today()->toDateString())
             ->whereNotNull('tanggal_masuk')
             ->first();
