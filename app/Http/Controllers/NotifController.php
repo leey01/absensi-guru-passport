@@ -58,7 +58,7 @@ class NotifController extends Controller
                     "priority" => "high",
                 ],
                 "data" => [
-                    "icon" => url('/storage/icon/icon-rus.png')
+                    "icon" => url('/icon/icon-rus.png')
                 ]
             ];
             $dataString = json_encode($data);
