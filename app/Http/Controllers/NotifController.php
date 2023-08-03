@@ -57,10 +57,9 @@ class NotifController extends Controller
                     "body" => "Hari ini anda punya acara $event->judul",
                     "content_available" => true,
                     "priority" => "high",
-                    "icon" => 'https://absensiguru.smkrus.com/icon/icon-rus.png',
                 ],
                 "data" => [
-                    "icon" => 'https://absensiguru.smkrus.com/icon/icon-rus.png',
+                    "icon" => Storage::disk('public')->url('icon/icon-rus.png'),
                 ]
             ];
             $dataString = json_encode($data);
