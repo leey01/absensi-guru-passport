@@ -54,13 +54,13 @@ class NotifController extends Controller
                 "registration_ids" => $usersToken,
                 "notification" => [
                     "title" => "Pemberitahuan Acara",
-                    "body" => "Hari ini anda punya acara $event->judul, " . Storage::disk('public')->url('icon/icon-rus.png'),
+                    "body" => "Hari ini anda punya acara $event->judul",
                     "content_available" => true,
                     "priority" => "high",
-                    "icon" => Storage::disk('public')->url('icon/icon-rus.png'),
+                    "icon" => 'https://absensiguru.smkrus.com/icon/icon-rus.png',
                 ],
                 "data" => [
-                    "icon" => Storage::disk('public')->url('icon/icon-rus.png'),
+                    "icon" => 'https://absensiguru.smkrus.com/icon/icon-rus.png',
                 ]
             ];
             $dataString = json_encode($data);
