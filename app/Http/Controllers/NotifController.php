@@ -56,6 +56,7 @@ class NotifController extends Controller
                     "body" => "Hari ini anda punya acara $event->judul",
                     "content_available" => true,
                     "priority" => "high",
+                    "icon" => url('/icon/icon-rus.png')
                 ],
                 "data" => [
                     "icon" => url('/icon/icon-rus.png')
