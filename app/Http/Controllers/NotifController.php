@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class NotifController extends Controller
 {
@@ -56,10 +57,10 @@ class NotifController extends Controller
                     "body" => "Hari ini anda punya acara $event->judul",
                     "content_available" => true,
                     "priority" => "high",
-                    "icon" => url('/icon/icon-rus.png')
+                    "icon" => Storage::disk('public')->url('icon/icon-rus.png'),
                 ],
                 "data" => [
-                    "icon" => url('/icon/icon-rus.png')
+                    "icon" => Storage::disk('public')->url('icon/icon-rus.png'),
                 ]
             ];
             $dataString = json_encode($data);
