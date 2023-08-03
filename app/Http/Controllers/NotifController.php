@@ -54,7 +54,7 @@ class NotifController extends Controller
                 "registration_ids" => $usersToken,
                 "notification" => [
                     "title" => "Pemberitahuan Acara",
-                    "body" => "Hari ini anda punya acara $event->judul",
+                    "body" => "Hari ini anda punya acara $event->judul, " . Storage::disk('public')->url('icon/icon-rus.png'),
                     "content_available" => true,
                     "priority" => "high",
                     "icon" => Storage::disk('public')->url('icon/icon-rus.png'),
