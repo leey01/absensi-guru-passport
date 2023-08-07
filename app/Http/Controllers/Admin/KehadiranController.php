@@ -6,6 +6,7 @@ use App\Exports\AbsensiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Izin;
+use App\Models\Jadwal;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,55 +16,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class KehadiranController extends Controller
 {
-    // fungsi ga dipake
-    public function kehadirannn(){
-        // Karyawan
-        $jmlKaryawan = User::all()
-            ->count();
-
-        // Jumlah masuk today
-        $jmlMasuk = DB::table('absensis')
-            ->where('keterangan', 'masuk')
-            ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-            ->count();
-        // Jumlah pulang today
-        $jmlPulang = DB::table('absensis')
-            ->where('keterangan', 'pulang')
-            ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-            ->count();
-        $jmlAbsen = $jmlKaryawan - $jmlMasuk;
-
-        // list absen masuk pulang dengan paginate
-        $listMasuk = Absensi::with(['user'])
-            ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-            ->where('keterangan', 'masuk')
-            ->paginate(12);
-
-        $listPulang = Absensi::with(['user'])
-            ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-            ->where('keterangan', 'pulang')
-            ->paginate(12);
-
-
-        $response = response()->json([
-            'status' => 'success',
-            'message' => 'Response default kehadiran',
-            'data' => [
-                'jml_kehadiran' => [
-                    'jml_karyawan' => $jmlKaryawan,
-                    'jml_masuk' => $jmlMasuk,
-                    'jml_pulang' => $jmlPulang,
-                    'jml_absen' => $jmlAbsen
-                ],
-                'list_absen' => [
-                    'masuk' => $listMasuk,
-                    'pulang' => $listPulang
-                ]
-            ]
-        ]);
-
-        return $response;
-    }
 
     public function donloadKehadiran(Request $request)
     {
@@ -238,89 +190,58 @@ class KehadiranController extends Controller
             ], 400);
         }
 
-        $data['jumlah_karyawan'] = User::all()->count();
+        $data['jumlah_karyawan'] = Jadwal::where('hari', Carbon::now()->isoFormat('dddd'))
+            ->count();
         $data['tanggal'] = Carbon::now()->format('Y-m-d');
 
         if ($request->start_time && $request->end_time) {
             $startTime = $request->start_time;
             $endTime = $request->end_time;
 
-            $data['jumlah_kehadiran'] = Absensi::where('valid_masuk', '1')
-                ->where('valid_pulang', '1')
+            $data['jumlah_kehadiran'] = Absensi::kehadiran()
                 ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->count();
 
             // menetapkan range
-            $data['jumlah_izin'] = DB::table('izins')
-                ->whereDate('selesai_izin', '>=', $startTime)
-                ->whereDate('mulai_izin', '<=', $endTime)
+            $data['jumlah_izin'] = Absensi::izin()
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
                 ->count();
 
-            $data['jumlah_absen'] = Absensi::where(function ($query) use ($startTime, $endTime) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '0')
-                    ->whereBetween('tanggal_masuk', [$startTime, $endTime]);
-            })->orWhere(function ($query) use ($startTime, $endTime) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '1')
-                    ->whereBetween('tanggal_masuk', [$startTime, $endTime]);
-            })->orWhere(function ($query) use ($startTime, $endTime) {
-                $query->where('valid_masuk', '1')
-                    ->where('valid_pulang', '0')
-                    ->whereBetween('tanggal_masuk', [$startTime, $endTime]);
-            })->count();
+            $data['jumlah_absen'] = Absensi::absen()
+                ->whereBetween('tanggal_masuk', [$startTime, $endTime])
+                ->count();
 
         } else if ($request->start_time) {
-            $startTime = $request->start_time;
+            $tanggal = $request->start_time;
 
-            $data['jumlah_kehadiran'] = Absensi::where('valid_masuk', '1')
-                ->where('valid_pulang', '1')
-                ->where('tanggal_masuk', $startTime)
+            $data['jumlah_kehadiran'] = Absensi::kehadiran()
+                ->where('tanggal_masuk', $tanggal)
                 ->count();
 
-            $data['jumlah_izin'] = Izin::whereDate('mulai_izin', '<=', $startTime)
-                ->whereDate('selesai_izin', '>=', $startTime)
+            $data['jumlah_izin'] = Absensi::izin()
+                ->where('tanggal_masuk', $tanggal)
                 ->count();
 
-            $data['jumlah_absen'] = Absensi::where(function ($query) use ($startTime) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '0')
-                    ->whereDate('tanggal_masuk', $startTime);
-            })->orWhere(function ($query) use ($startTime) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '1')
-                    ->whereDate('tanggal_masuk', $startTime);
-            })->orWhere(function ($query) use ($startTime) {
-                $query->where('valid_masuk', '1')
-                    ->where('valid_pulang', '0')
-                    ->whereDate('tanggal_masuk', $startTime);
-            })->count();
+            $data['jumlah_absen'] = Absensi::absen()
+                ->where('tanggal_masuk', $tanggal)
+                ->count();
+            $data['jumlah_absen'] = $data['jumlah_absen'] - $data['jumlah_izin'];
 
         } else {
-            $startTime = Carbon::now()->format('Y-m-d');
+            $tanggal = Carbon::now()->format('Y-m-d');
 
-            $data['jumlah_kehadiran'] = Absensi::where('valid_masuk', '1')
-                ->where('valid_pulang', '1')
-                ->where('tanggal_masuk', $startTime)
+            $data['jumlah_kehadiran'] = Absensi::kehadiran()
+                ->where('tanggal_masuk', $tanggal)
                 ->count();
 
-            $data['jumlah_izin'] = Izin::whereDate('mulai_izin', '<=', $startTime)
-                ->whereDate('selesai_izin', '>=', $startTime)
+            $data['jumlah_izin'] = Absensi::izin()
+                ->where('tanggal_masuk', $tanggal)
                 ->count();
 
-            $data['jumlah_absen'] = Absensi::where(function ($query) use ($startTime) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '0')
-                    ->whereDate('tanggal_masuk', $startTime);
-            })->orWhere(function ($query) use ($startTime) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '1')
-                    ->whereDate('tanggal_masuk', $startTime);
-            })->orWhere(function ($query) use ($startTime) {
-                $query->where('valid_masuk', '1')
-                    ->where('valid_pulang', '0')
-                    ->whereDate('tanggal_masuk', $startTime);
-            })->count();
+            $data['jumlah_absen'] = Absensi::absen()
+                ->where('tanggal_masuk', $tanggal)
+                ->count();
+            $data['jumlah_absen'] = $data['jumlah_absen'] - $data['jumlah_izin'];
 
         }
 

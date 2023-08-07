@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Event;
 use App\Models\Izin;
+use App\Models\Jadwal;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -20,20 +22,22 @@ class DashboardController extends Controller
         $request->tanggal ? $tanggal = $request->tanggal : $tanggal = Carbon::now()->format('Y-m-d');
 
         // Karyawan
-        $jmlKaryawan = User::all()
+        $jmlKaryawan = Jadwal::where('hari', Carbon::now()->isoFormat('dddd'))
             ->count();
 
         // Jumlah masuk today
-        $jmlMasuk = Absensi::where('is_valid_masuk', '1')
-            ->where('isvld_wkt_masuk', '1')
-            ->whereDate('tanggal_masuk', $tanggal)
+        $jmlMasuk = Absensi::kehadiran()
+            ->where('tanggal_masuk', $tanggal)
             ->count();
-        $jmlIzin = Izin::whereDate('mulai_izin', '<=', $tanggal)
-            ->whereDate('selesai_izin', '>=', $tanggal)
+
+        $jmlIzin = Absensi::izin()
+            ->where('tanggal_masuk', $tanggal)
             ->count();
-        $jmlAbsen = $jmlKaryawan - (Absensi::where('keterangan', 'masuk')
-                ->whereDate('tanggal_masuk', $tanggal)
-                ->count());
+
+        $jmlAbsen = Absensi::absen()
+            ->where('tanggal_masuk', $tanggal)
+            ->count();
+        $jmlAbsen = $jmlAbsen - $jmlIzin;
 
         $response = response()->json([
             'message' => 'success',

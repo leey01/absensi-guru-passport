@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class Absensi extends Model
 {
     use HasFactory;
-
     protected $appends = ['link_foto_masuk', 'link_foto_pulang'];
 
     protected $fillable = [
@@ -62,5 +63,86 @@ class Absensi extends Model
         }
     }
 
+    // valid masuk 1
+    // valid pulang 1
+//    public static function kehadiran($startMonth, $endMonth)
+//    {
+//
+//        $data = Absensi::where('user_id', Auth::user()->id)
+//            ->where('valid_masuk', '1')
+//            ->where('valid_pulang', '1')
+//            ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+//            ->get();
+//
+//        return $data ?? null;
+//    }
+
+    public static function kehadiran()
+    {
+
+        $data = Absensi::where('valid_masuk', '1')
+            ->where('valid_pulang', '1')
+            ->get();
+
+        return $data ?? null;
+    }
+
+//    public static function absen($user, $startMonth, $endMonth)
+//    {
+//
+//        $data = Absensi::where(function ($query) use ($startMonth, $endMonth, $user) {
+//            $query->where('valid_masuk', '0')
+//                ->where('valid_pulang', '0')
+//                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+//                ->where('user_id', $user->id);
+//        })->orWhere(function ($query) use ($startMonth, $endMonth, $user) {
+//            $query->where('valid_masuk', '0')
+//                ->where('valid_pulang', '1')
+//                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+//                ->where('user_id', $user->id);
+//        })->orWhere(function ($query) use ($startMonth, $endMonth, $user) {
+//            $query->where('valid_masuk', '1')
+//                ->where('valid_pulang', '0')
+//                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+//                ->where('user_id', $user->id);
+//        })->get();
+//
+//        return $data ?? null;
+//    }
+
+    public static function absen()
+    {
+
+        $data = Absensi::where(function ($query) {
+            $query->where('valid_masuk', '0')
+                ->where('valid_pulang', '0');
+        })->orWhere(function ($query) {
+            $query->where('valid_masuk', '0')
+                ->where('valid_pulang', '1');
+        })->orWhere(function ($query) {
+            $query->where('valid_masuk', '1')
+                ->where('valid_pulang', '0');
+        })->get();
+
+        return $data ?? null;
+    }
+
+//    public static function izin($user, $startMonth, $endMonth)
+//    {
+//        $data = Absensi::where('user_id', $user->id)
+//            ->where('keterangan', 'izin')
+//            ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+//            ->get();
+//
+//        return $data ?? null;
+//    }
+
+    public static function izin()
+    {
+        $data = Absensi::where('keterangan', 'izin')
+            ->get();
+
+        return $data ?? null;
+    }
 
 }

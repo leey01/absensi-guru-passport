@@ -25,44 +25,22 @@ class ProfileController extends Controller
         $endMonth = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         try {
-            $kehadiran = Absensi::where('user_id', Auth::user()->id)
-                ->where('valid_masuk', '1')
-                ->where('valid_pulang', '1')
+
+            $kehadiran = Absensi::kehadiran()
+                ->where('user_id', $user->id)
                 ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
                 ->count();
 
-            $izin = Izin::where('user_id', Auth::user()->id)
-                ->whereDate('selesai_izin', '>=', $startMonth)
-                ->whereDate('mulai_izin', '<=', $endMonth)
-                ->get();
+            $izin = Absensi::izin()
+                ->where('user_id', $user->id)
+                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+                ->count();
 
-//            $absen = Absensi::where('user_id', Auth::user()->id)
-//                ->where(function ($query) {
-//                    $query->where('valid_masuk', '0')
-//                        ->orWhere('valid_pulang', '0');
-//                })
-//                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
-//                ->count();
-
-            $absen = Absensi::where(function ($query) use ($startMonth, $endMonth, $user) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '0')
-                    ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
-                    ->where('user_id', $user->id);
-            })->orWhere(function ($query) use ($startMonth, $endMonth, $user) {
-                $query->where('valid_masuk', '0')
-                    ->where('valid_pulang', '1')
-                    ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
-                    ->where('user_id', $user->id);
-            })->orWhere(function ($query) use ($startMonth, $endMonth, $user) {
-                $query->where('valid_masuk', '1')
-                    ->where('valid_pulang', '0')
-                    ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
-                    ->where('user_id', $user->id);
-            })->count();
-
-            $izin = $this->parseDate($izin);
-            $izin = count($izin);
+            $absen = Absensi::absen()
+                ->where('user_id', $user->id)
+                ->whereBetween('tanggal_masuk', [$startMonth, $endMonth])
+                ->count();
+            $absen = $absen - $izin;
 
 
         } catch (QueryException $e) {
