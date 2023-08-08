@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use function PHPUnit\Framework\isEmpty;
 
 class Absensi extends Model
 {
@@ -258,7 +259,7 @@ class Absensi extends Model
             ->where('user_id', $user_id)
             ->get();
 
-        if ($izin) {
+        if (!isEmpty($izin)) {
             return true;
         } else {
             return false;
