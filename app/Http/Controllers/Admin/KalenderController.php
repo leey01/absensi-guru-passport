@@ -35,7 +35,7 @@ class KalenderController extends Controller
             return response()->json([
                 'message' => 'Data tidak ditemukan',
                 'data' => $events
-            ], 404);
+            ]);
         }
 
         return response()->json([

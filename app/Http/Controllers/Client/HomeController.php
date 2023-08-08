@@ -44,67 +44,46 @@ class HomeController extends Controller
             ], 400);
         }
 
-        // Foto Masuk
-        $timestamp = time();
-        $fotoName = $timestamp . $request->foto_masuk->getClientOriginalName();
-        $fotoPath = 'foto_masuk/'. $fotoName;
-        Storage::disk('public')->put($fotoPath, file_get_contents($request->foto_masuk));
+        // cek apakah sekarang user sedang izin atau tidak
+        $statusIzin = Absensi::statusIzin($request->user()->id);
+        if ($statusIzin) {
+            return response()->json([
+                'message' => 'Anda sedang izin'
+            ], 403);
+        }
+
+        // simpan foto
+        $fotoPath = Absensi::simpanFoto($request->foto_masuk, 'foto_masuk');
 
 
-        // waktu sekarang
+        // jadwal dan batas absen
         $now = Carbon::parse(Carbon::now()->format('H:i:s'));
-        //batas mulai absen masuk
-        $time = Setting::where('key', 'batas_waktu_absen_masuk')->first();
-        $time = explode(':', $time->value);
+        $jadwal = Absensi::batasAbsenMasuk($request->user()->id);
 
-        // jadwal masuk user
-        $hari = Carbon::now()->format('Y-m-d');
-        $hari = Carbon::parse($hari)->locale('id');
-        $hari->settings(['formatFunction' => 'translatedFormat']);
-        $jadwalAbsen = Jadwal::where('user_id', Auth::user()->id)
-            ->where('hari', $hari->format('l'))
-            ->first();
-        if (!$jadwalAbsen) {
+        // validasi klo ada jadwal absen hari ini
+        if ($jadwal['jadwal_absen'] == false) {
             return response()->json([
                 'message' => 'jadwal absen tidak ditemukan'
             ], 404);
         }
-        $jadwalAbsen = Carbon::parse($jadwalAbsen->jam_masuk);
-
-        // waktu minimal user bisa absen
-        $modifiedTime = $jadwalAbsen->copy()->subHours($time[0])->subMinutes($time[1])->subSeconds($time[2]);
-
-        // jika waktu minimal absen masuk berkurang melebihi tengah malam akan jadi 00:00
-        if ($modifiedTime->isYesterday()) {
-            $batasAbsen = Carbon::now()->startOfDay();
-        } else {
-            $batasAbsen = $modifiedTime;
-        }
 
         // validasi waktu masuk
-        // validasi klo ada jadwal absen hari ini
-        if ($jadwalAbsen) {
-            // jika waktu sekarang kurang dari batas waktu masuk
-            if ($now->lessThan($batasAbsen)) {
-                return response()->json([
-                    'message' => 'belum waktunya absen masuk',
-                    'waktu_minimal_absen' => $batasAbsen->format('H:i:s'),
-                ], 400);
-            } else {
-                // jika waktu sekarang kurang dari jadwal masuk maka akan true
-                if ($now->lessThan($jadwalAbsen)) {
-                    $isValid = 1;
-                    $message = 'absen masuk berhasil';
-                } else {
-                    $isValid = 0;
-                    $message = 'absen masuk terlambat';
-                }
-            }
+        $validasiMasuk = Absensi::validasiMasuk($jadwal, $now);
+
+        if (!$validasiMasuk['status_waktu']) {
+            return response()->json([
+                'message' => 'belum waktunya absen masuk',
+                'batas_absen' => $validasiMasuk['waktu_minimal_absen'],
+            ], 400);
         }
 
-        // validasi untuk kolom valid_masuk
-        $request->is_valid_masuk == 1 && $isValid == 1 ? $valid = 1 : $valid = 0;
 
+        // validasi untuk kolom valid_masuk
+        if ($request->is_valid_masuk == 1 && $validasiMasuk['validasi_waktu'] == 1) {
+            $valid = 1;
+        } else {
+            $valid = 0;
+        }
 
         try {
             $absen = Absensi::create([
@@ -112,7 +91,7 @@ class HomeController extends Controller
                 'keterangan' => 'masuk',
                 'valid_masuk' => $valid,
                 'is_valid_masuk' => $request->is_valid_masuk,
-                'isvld_wkt_masuk' => $isValid,
+                'isvld_wkt_masuk' => $validasiMasuk['validasi_waktu'],
                 'catatan_masuk' => $request->catatan_masuk,
                 'waktu_masuk' => Carbon::now()->format('H:i:s'),
                 'tanggal_masuk' => Carbon::now()->format('Y-m-d'),
@@ -147,7 +126,7 @@ class HomeController extends Controller
 //        event(new KehadiranMasukEvent($absen->id));
 
         return response()->json([
-            'message' => $message,
+            'message' => $validasiMasuk['message'],
             'data' => $absen
         ]);
     }
@@ -170,62 +149,27 @@ class HomeController extends Controller
         }
 
         // Foto Pulang
-        $timestamp = time();
-        $fotoName = $timestamp . $request->foto_pulang->getClientOriginalName();
-        $fotoPath = 'foto_pulang/'. $fotoName;
-        Storage::disk('public')->put($fotoPath, file_get_contents($request->foto_pulang));
-        $url = Storage::disk('public')->url($fotoPath);
+        $fotoPath = Absensi::simpanFoto($request->foto_pulang, 'foto_pulang');
 
-        // validasi waktu absen pulang
-        // waktu sekarang
+        // jadwal dan batas absen
         $now = Carbon::parse(Carbon::now()->format('H:i:s'));
-        //batas mulai absen masuk
-        $time = Setting::where('key', 'batas_waktu_absen_pulang')->first();
-        $time = explode(':', $time->value);
+        $jadwal = Absensi::batasAbsenPulang($request->user()->id);
 
-        // jadwal pulang user
-        $hari = Carbon::now()->format('Y-m-d');
-        $hari = Carbon::parse($hari)->locale('id');
-        $hari->settings(['formatFunction' => 'translatedFormat']);
-        $jadwalAbsen = Jadwal::where('user_id', Auth::user()->id)
-            ->where('hari', $hari->format('l'))
-            ->first();
-        $jadwalAbsen = Carbon::parse($jadwalAbsen->jam_pulang);
-
-        // waktu maksimal user bisa absen
-        $modifiedTime = $jadwalAbsen->copy()->addHours($time[0])->addMinutes($time[1])->addSeconds($time[2]);
-
-        // jika waktu maksimal absen pulang bertambah melebihi tengah malam akan jadi 23:59
-        if ($modifiedTime->isTomorrow()) {
-            $batasAbsen = Carbon::now()->endOfDay();
-        } else {
-            $batasAbsen = $modifiedTime;
-        }
-
-        // validasi waktu pulang
         // validasi klo ada jadwal absen hari ini
-        if ($jadwalAbsen) {
-            // jika waktu sekarang melebihi dari batas waktu pulang
-            if ($now->greaterThan($batasAbsen)) {
-                $message = 'waktu absen pulang sudah selesai';
-                $isValid = 0;
-            } else {
-                // jika waktu sekarang melebihi dari jadwal pulang maka akan true
-                if ($now->greaterThan($jadwalAbsen)) {
-                    $isValid = 1;
-                    $message = 'absen pulang berhasil';
-                } else {
-                    $isValid = 0;
-                    $message = 'waktu absen pulang belum tiba';
-                }
-            }
-        } else {
+        if ($jadwal['jadwal_absen'] == false) {
             return response()->json([
-                'message' => 'jadwal tidak ditemukan, tidak perlu absen'
+                'message' => 'jadwal absen tidak ditemukan'
             ], 404);
         }
 
-        $request->is_valid_pulang == 1 && $isValid == 1 ? $valid = 1 : $valid = 0;
+        // validasi waktu pulang
+        $validasiPulang = Absensi::validasiPulang($jadwal, $now);
+
+        if ($request->is_valid_pulang == 1 && $validasiPulang['validasi_waktu'] == 1) {
+            $valid = 1;
+        } else {
+            $valid = 0;
+        }
 
         try {
             $absen = Absensi::where('user_id', Auth::user()->id)
@@ -235,7 +179,7 @@ class HomeController extends Controller
                     'keterangan' => 'pulang',
                     'valid_pulang' => $valid,
                     'is_valid_pulang' => $request->is_valid_pulang,
-                    'isvld_wkt_pulang' => $isValid,
+                    'isvld_wkt_pulang' => $validasiPulang['validasi_waktu'],
                     'catatan_pulang' => $request->catatan_pulang,
                     'waktu_pulang' => Carbon::now()->format('H:i:s'),
                     'tanggal_pulang' => Carbon::now()->format('Y-m-d'),
@@ -271,9 +215,8 @@ class HomeController extends Controller
 
         $absen = Absensi::find($id);
         return response()->json([
-            'message' => $message,
+            'message' => $validasiPulang['message'],
             'data' => $absen,
-            'batas_absen' => $batasAbsen->format('H:i:s'),
         ]);
     }
 
