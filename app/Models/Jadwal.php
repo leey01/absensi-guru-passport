@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,4 +22,13 @@ class Jadwal extends Model
         'created_at',
         'updated_at',
     ];
+
+    public static function jumlahKaryawan($tanggal)
+    {
+        $tanggalCarbon = Carbon::parse($tanggal)->isoFormat('dddd');
+        $jmlKaryawan = Jadwal::where('hari', $tanggalCarbon)
+            ->count();
+
+        return $jmlKaryawan;
+    }
 }

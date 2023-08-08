@@ -190,8 +190,7 @@ class KehadiranController extends Controller
             ], 400);
         }
 
-        $data['jumlah_karyawan'] = Jadwal::where('hari', Carbon::now()->isoFormat('dddd'))
-            ->count();
+        $data['jumlah_karyawan'] = Jadwal::jumlahKaryawan($request->start_time);
         $data['tanggal'] = Carbon::now()->format('Y-m-d');
 
         if ($request->start_time && $request->end_time) {

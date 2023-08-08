@@ -22,8 +22,7 @@ class DashboardController extends Controller
         $request->tanggal ? $tanggal = $request->tanggal : $tanggal = Carbon::now()->format('Y-m-d');
 
         // Karyawan
-        $jmlKaryawan = Jadwal::where('hari', Carbon::now()->isoFormat('dddd'))
-            ->count();
+        $jmlKaryawan = Jadwal::jumlahKaryawan($tanggal);
 
         // Jumlah masuk today
         $jmlMasuk = Absensi::kehadiran()
