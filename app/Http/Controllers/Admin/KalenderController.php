@@ -20,6 +20,7 @@ class KalenderController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'bulan' => 'required',
+            'tahun' => 'required'
         ]);
 
         if ($validator->fails()){
@@ -29,7 +30,9 @@ class KalenderController extends Controller
             ], 400);
         }
 
-        $events = Event::whereMonth('waktu_mulai', $request->bulan)->get();
+        $events = Event::whereYear('waktu_mulai', $request->tahun)
+            ->whereMonth('waktu_mulai', $request->bulan)
+            ->get();
 
         if ($events->isEmpty()) {
             return response()->json([
