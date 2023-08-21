@@ -96,8 +96,11 @@ class AutoAbsenController extends Controller
             ]);
         }
 
+        // filter user yg sedang izin tapi hari ini libur, jadi hari ini dia dianggap libur bukan izin
+        $userIzin2 = array_diff($userizin, $usersLibur);
+
         // sistem otomatis absen untuk user yg sedang izin
-        foreach ($userizin as $user) {
+        foreach ($userIzin2 as $user) {
             $absen = Absensi::create([
                 'user_id' => $user,
                 'keterangan' => 'izin',
