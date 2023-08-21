@@ -313,8 +313,17 @@ class HomeController extends Controller
         $jadwalAbsen = Jadwal::where('user_id', Auth::user()->id)
             ->where('hari', $request->hari)
             ->first();
-        $jadwalAbsen ? $jadwalMasuk = $jadwalAbsen->jam_masuk : $jadwalMasuk = '';
-        $jadwalAbsen ? $jadwalPulang = $jadwalAbsen->jam_pulang : $jadwalPulang = '';
+        $jadwalAbsen ? $jadwalMasuk = $jadwalAbsen->jam_masuk : $jadwalMasuk = null;
+        $jadwalAbsen ? $jadwalPulang = $jadwalAbsen->jam_pulang : $jadwalPulang = null;
+
+        // kondisi jika tidak ada jadwal absen
+        if ($jadwalMasuk == null && $jadwalPulang == null) {
+            $jadwalMasuk = 'Tidak ada Jadwal';
+            $jadwalPulang = 'Tidak ada Jadwal';
+        } else {
+            $jadwalMasuk = Carbon::parse($jadwalMasuk)->format('H.i');
+            $jadwalPulang = Carbon::parse($jadwalPulang)->format('H.i');
+        }
 
         // kordinat
         $kor = Setting::whereIn("key", ["longitude", "latitude", "radius"])
@@ -334,8 +343,8 @@ class HomeController extends Controller
                 'email' => $user->email,
             ],
             'jadwal_absen' => [
-                'masuk' => Carbon::parse($jadwalMasuk)->format('H.i') ?? '',
-                'pulang' => Carbon::parse($jadwalPulang)->format('H.i') ?? '',
+                'masuk' => $jadwalMasuk,
+                'pulang' => $jadwalPulang,
             ],
             'status_absen' => [
                 'masuk' => $statusMasuk,
