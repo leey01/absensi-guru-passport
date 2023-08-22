@@ -48,6 +48,8 @@ class KaryawanController extends Controller
             }
         }
 
+        $result = $karyawans;
+
         return response()->json([
             'message' => 'success',
             'data' => $result
