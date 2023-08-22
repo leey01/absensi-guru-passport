@@ -55,9 +55,10 @@ class DashboardController extends Controller
     public function statistik()
     {
 
-        $data_mingguan = Absensi::whereBetween('created_at', [Carbon::now()->subWeek()->format('Y-m-d'), Carbon::now()])
+        $data_mingguan = Absensi::whereBetween('tanggal_masuk', [Carbon::now()->subWeek()->format('Y-m-d'), Carbon::now()->format('Y-m-d')])
+            ->where('valid_masuk', '1')
             ->where('valid_pulang', '1')
-            ->orderBy('tanggal_pulang', 'asc')
+            ->orderBy('tanggal_masuk', 'asc')
             ->get()
             ->groupBy('tanggal_masuk');
 
@@ -68,9 +69,10 @@ class DashboardController extends Controller
             ];
         }
 
-        $data_bulanan = Absensi::whereBetween('created_at', [Carbon::now()->subMonth()->format('Y-m-d'), Carbon::now()])
+        $data_bulanan = Absensi::whereBetween('tanggal_masuk', [Carbon::now()->subMonth()->format('Y-m-d'), Carbon::now()->format('Y-m-d')])
+            ->where('valid_masuk', '1')
             ->where('valid_pulang', '1')
-            ->orderBy('tanggal_pulang', 'asc')
+            ->orderBy('tanggal_masuk', 'asc')
             ->get()
             ->groupBy('tanggal_masuk');
 
