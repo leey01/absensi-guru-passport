@@ -46,9 +46,9 @@ class KaryawanController extends Controller
                     }
                 }
             }
+        } else {
+            $result = $karyawans;
         }
-
-        $result = $karyawans;
 
         return response()->json([
             'message' => 'success',
