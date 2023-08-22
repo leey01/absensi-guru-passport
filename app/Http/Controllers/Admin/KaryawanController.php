@@ -155,6 +155,7 @@ class KaryawanController extends Controller
         try {
             DB::table('kategori_karyawan_users')->where('user_id', $id)->delete();
             Jadwal::where('user_id', $id)->delete();
+            DB::table('pesertas')->where('user_id', $id)->delete();
             User::where('id', $id)->delete();
             return response()->json([
                 'message' => 'success delete',
