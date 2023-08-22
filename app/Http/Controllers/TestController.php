@@ -331,8 +331,10 @@ class TestController extends Controller
     public function cekJadwal($hari)
     {
         $hari = Jadwal::where('hari', $hari)
-            ->count();
+            ->get();
 
-        return $hari;
+        return response()->json([
+            'jadwal' => $hari,
+        ]);
     }
 }
