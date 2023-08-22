@@ -24,6 +24,8 @@ class KaryawanController extends Controller
     {
         $result = array();
 
+        $karyawans = User::with('ktgkaryawan')->get();
+
         if (isset($request->search) ? true : false) {
             $result = User::with('ktgkaryawan')
                 ->orWhere('nama', 'like', '%' . $request->search . '%')
@@ -33,12 +35,7 @@ class KaryawanController extends Controller
                 ->orWhere('niy', 'like', '%' . $request->search . '%')
                 ->get();
             $result = $result->toArray();
-        }
-
-
-        $karyawans = User::with('ktgkaryawan')->get();
-
-        if (isset($request->kategori_id) ? true : false) {
+        } else if (isset($request->kategori_id) ? true : false) {
             foreach ($karyawans as $karyawan) {
                 foreach ($karyawan->ktgkaryawan as $ktg) {
                     if ($ktg->id == $request->kategori_id) {
