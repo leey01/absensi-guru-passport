@@ -327,4 +327,12 @@ class TestController extends Controller
             'users' => $users,
         ]);
     }
+
+    public function cekJadwal($hari)
+    {
+        $hari = Jadwal::where('hari', $hari)
+            ->count();
+
+        return $hari;
+    }
 }

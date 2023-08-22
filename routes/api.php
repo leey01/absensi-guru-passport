@@ -176,6 +176,7 @@ Route::post('send-notification', [App\Http\Controllers\NotifController::class, '
 Route::get('/get-user-blom-absen', [TestController::class, 'testYgBlomAbsen']);
 Route::post('/parsedate', [HistoryController::class, 'parseDate']);
 Route::get('/absen-libur', [TestController::class, 'testAbsenLibur']);
+Route::get('/cek-jadwal/{hari}', [TestController::class, 'cekJadwal']);
 Route::get('/test-absen', function () {
     dispatch(new \App\Jobs\AbsenJob());
 });
