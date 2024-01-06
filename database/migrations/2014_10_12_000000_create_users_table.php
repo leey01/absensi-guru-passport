@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('no_hp');
             $table->string('pf_foto')->nullable();
-            $table->enum('jenis_user', ['pengajar', 'staff']);
             $table->rememberToken();
             $table->timestamps();
         });

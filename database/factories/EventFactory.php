@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Kalender>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
  */
-class KalenderFactory extends Factory
+class EventFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,10 +19,11 @@ class KalenderFactory extends Factory
         return [
             'user_id' => mt_rand(1,5),
             'judul' => fake()->words(3, true),
+            'kategori_event' => fake()->randomElement(['event' ,'libur']),
+            'lokasi' => fake()->city(),
+            'waktu_mulai' => fake()->time(),
+            'waktu_selesai' => fake()->time(),
             'deskripsi' => fake()->text(),
-            'tanggal' => fake()->date('Y-m-d'),
-            'untuk' => fake()->randomElement(['all' ,'guru', 'staff']),
-            'is_libur' => fake()->randomElement([1, 0]),
         ];
     }
 }

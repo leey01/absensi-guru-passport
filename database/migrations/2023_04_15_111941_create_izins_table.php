@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('kalenders', function (Blueprint $table) {
+        Schema::create('izins', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->string('judul');
-            $table->string('deskripsi');
-            $table->date('tanggal');
-            $table->enum('untuk', ['all', 'guru', 'staff']);
-            $table->boolean('is_libur');
+            $table->enum('jenis_izin', ['izin', 'dinas']);
+            $table->date('mulai_izin');
+            $table->date('selesai_izin')->nullable();
+            $table->string('deskripsi')->nullable();
+            $table->string('path_file');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kalenders');
+        Schema::dropIfExists('izins');
     }
 };

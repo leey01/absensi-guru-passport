@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class IsAdmin
 {
@@ -12,15 +13,35 @@ class IsAdmin
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\JsonResponse
+     *
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user()->jenis_user == 'staff') {
+//        if ($request->user()->jenis_user == 'staff') {
+//            return $next($request);
+//        }
+
+        $kategori = $request->user()->ktgkaryawan->toArray();
+        $id_admin = DB::table('role_admins')->pluck('kategori_id')->toArray();
+
+        $isAdmin = array_filter($kategori, function ($obj) use ($id_admin) {
+            foreach ($id_admin as $value) {
+                if ($obj['id'] == $value) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        $isAdmin ? $isAdmin = true : $isAdmin = false;
+
+        if ($isAdmin) {
             return $next($request);
         }
+
         return response()->json([
-            'message' => 'Access denied'
+            'message' => 'Access denied',
+            'admin' => $isAdmin
         ], 403);
 
     }
